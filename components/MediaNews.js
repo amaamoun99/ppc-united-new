@@ -90,7 +90,7 @@ export default function MediaNews() {
   return (
     <section 
         ref={sectionRef} 
-        className="py-32 relative z-10 overflow-hidden border-t border-white/10 bg-stone-950"
+        className="py-32 pb-0 relative z-10 overflow-hidden border-t border-white/10 bg-stone-950"
         style={{ isolation: 'isolate' }}
     >
       <div className="container mx-auto px-6 relative z-10">
@@ -114,7 +114,7 @@ export default function MediaNews() {
         </div>
 
         {/* --- CTA BUTTON --- */}
-        <div className="mt-20 flex justify-center">
+        <div className="m-20 flex justify-center">
           <ViewAllNewsButton />
         </div>
       </div>

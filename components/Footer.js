@@ -48,17 +48,10 @@ export default function Footer() {
   }, []);
 
   return (
-    <div 
+    <footer 
         ref={footerRef} 
-        className="relative h-[80vh]" 
-        style={{ clipPath: "inset(0% 0% 0% 0%)" }} // Hardware acceleration fix
+        className="relative min-h-[80vh] bg-stone-950 text-white z-30 flex flex-col justify-between overflow-hidden"
     >
-      {/* THE TRICK: 
-         This footer is 'sticky' at the bottom. 
-         The previous section (News) needs 'zIndex: 10' and 'marginBottom: 80vh' 
-         so it slides OVER this footer.
-      */}
-      <div className="fixed bottom-0 left-0 w-full h-[80vh] bg-stone-950 text-white z-0 flex flex-col justify-between overflow-hidden">
         
         {/* BACKGROUND GIANT LOGO */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
@@ -161,7 +154,6 @@ export default function Footer() {
                 <span>Riyadh, KSA</span>
             </div>
         </div>
-      </div>
-    </div>
+    </footer>
   );
 }

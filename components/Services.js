@@ -53,6 +53,8 @@ export default function Services() {
           pinSpacing: true,
           scrub: 1,
           end: '+=3000',
+          invalidateOnRefresh: true,
+          anticipatePin: 1,
           onUpdate: (self) => {
              if (progressBarRef.current) {
                gsap.to(progressBarRef.current, { scaleX: self.progress, duration: 0.1 });
@@ -113,7 +115,7 @@ export default function Services() {
   }, []);
 
   return (
-    <section ref={triggerRef} className="relative overflow-hidden z-10 bg-slate-900">
+    <section ref={triggerRef} className="relative overflow-hidden z-20 bg-slate-900">
       {/* Progress Bar (Top) */}
       <div className="fixed top-0 left-0 w-full h-1 bg-gray-200 z-50 mix-blend-difference">
           <div ref={progressBarRef} className="h-full bg-red-600 origin-left scale-x-0" />

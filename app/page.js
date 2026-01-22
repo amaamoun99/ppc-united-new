@@ -12,11 +12,20 @@ import HorizontalTimeline from '@/components/HorizontalTimeline';
 export default function Home() {
   // Global refresh once on mount to align all pins
   useEffect(() => {
-    // A slight delay ensures all images/fonts are loaded before GSAP calculates start/end points
-    const timer = setTimeout(() => {
-      ScrollTrigger.refresh();
-    }, 500);
-    return () => clearTimeout(timer);
+    // Wait for window load to ensure all images/fonts are loaded before GSAP calculates start/end points
+    const handleLoad = () => {
+      // Small delay to ensure all components have initialized their ScrollTriggers
+      setTimeout(() => {
+        ScrollTrigger.refresh();
+      }, 100);
+    };
+
+    if (document.readyState === 'complete') {
+      handleLoad();
+    } else {
+      window.addEventListener('load', handleLoad);
+      return () => window.removeEventListener('load', handleLoad);
+    }
   }, []);
 
   return (
@@ -26,6 +35,7 @@ export default function Home() {
       <LatestProjects />
       <HorizontalTimeline />
       <MediaNews />
+
       <GetInTouch />
     </main>
   );

@@ -69,7 +69,7 @@ export default function HorizontalTimeline() {
   }, []);
 
   return (
-    <section ref={componentRef} className="relative z-10 bg-stone-900 overflow-hidden"> 
+    <section ref={componentRef} className="relative z-20 bg-stone-900 overflow-hidden"> 
          {/* IMPORTANT: Removed 'sticky top-0' from here as GSAP handles the pinning via the parent section */}
          <div className="h-screen flex items-center relative overflow-hidden">
             
