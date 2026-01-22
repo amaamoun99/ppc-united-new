@@ -168,7 +168,7 @@ export default function Services() {
                         Finishing<span className="text-amber-600">.</span>
                     </h2>
                     <p className="text-2xl text-stone-600 max-w-md font-serif italic">
-                        "{services[1].description}"
+                        &ldquo;{services[1].description}&rdquo;
                     </p>
                 </div>
             </div>

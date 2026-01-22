@@ -132,7 +132,7 @@ export default function GetInTouch() {
             
             {/* Header */}
             <div className="flex justify-between items-end mb-12 form-element opacity-0">
-                <h3 className="text-4xl font-bold text-stone-900">Let's Build.</h3>
+                <h3 className="text-4xl font-bold text-stone-900">Let&apos;s Build.</h3>
                 <button 
                     onClick={(e) => { e.stopPropagation(); closeForm(); }}
                     className="text-sm font-mono text-stone-500 hover:text-red-500 uppercase tracking-widest"

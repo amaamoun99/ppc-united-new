@@ -26,7 +26,7 @@ const milestones = [
     id: 4,
     title: 'Vision 2030 Partnership',
     year: '2024',
-    description: 'Leading projects supporting Saudi Arabia\'s ambitious development goals.',
+    description: 'Leading projects supporting Saudi Arabia&apos;s ambitious development goals.',
   },
 ];
 
@@ -70,7 +70,7 @@ export default function HorizontalTimeline() {
 
   return (
     <section ref={componentRef} className="relative z-20 bg-stone-900 overflow-hidden"> 
-         {/* IMPORTANT: Removed 'sticky top-0' from here as GSAP handles the pinning via the parent section */}
+         {/* IMPORTANT: Removed sticky top-0 from here as GSAP handles the pinning via the parent section */}
          <div className="h-screen flex items-center relative overflow-hidden">
             
             {/* Background Label */}

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useLayoutEffect } from 'react';
 import { gsap, ScrollTrigger } from '@/lib/gsap';
-import Image from 'next/image';
+
 
 const milestones = [
   {
