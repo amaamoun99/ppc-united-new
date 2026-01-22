@@ -6,6 +6,17 @@
 
 :root {
   --brand-color: #00478f;
+  /* Blue Gradient Palette */
+  --blue-950: #000a14;
+  --blue-900: #001122;
+  --blue-800: #003366;
+  --blue-700: #00478f;
+  --blue-600: #0066cc;
+  --blue-500: #00a8ff;
+  --blue-400: #4fc3f7;
+  --brand-rgb: 0, 71, 143;
+  --blue-500-rgb: 0, 168, 255;
+  --blue-400-rgb: 79, 195, 247;
 }
 
 * {
@@ -23,8 +34,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
-  background-color: #fafaf9; /* Default background */
-  color: #1c1917; /* Default text color */
+  background-color: var(--blue-950); /* Default background - darkest navy */
+  color: #ffffff; /* Default text color - white for dark background */
 }
 
 /* Ensure all sections have a predictable stacking context and background behavior */
@@ -59,5 +70,39 @@ section {
 }
 .text-stroke-white {
   -webkit-text-stroke: 1px rgba(255, 255, 255, 0.5);
+}
+
+/* Blue Gradient Utilities */
+.gradient-blue-dark {
+  background: linear-gradient(to bottom, var(--blue-950), var(--blue-900), var(--blue-800));
+}
+
+.gradient-blue-medium {
+  background: linear-gradient(to bottom, var(--blue-600), var(--blue-700), var(--blue-800));
+}
+
+.gradient-blue-bright {
+  background: linear-gradient(to bottom, var(--blue-500), var(--blue-400), var(--blue-300));
+}
+
+.gradient-blue-flow {
+  background: linear-gradient(to bottom, 
+    var(--blue-950) 0%,
+    var(--blue-900) 20%,
+    var(--blue-800) 40%,
+    var(--blue-700) 60%,
+    var(--blue-600) 80%,
+    var(--blue-500) 100%
+  );
+}
+
+/* Smooth gradient transitions between sections */
+.section-gradient-transition {
+  background: linear-gradient(to bottom, 
+    transparent 0%,
+    currentColor 50%,
+    transparent 100%
+  );
+  opacity: 0.1;
 }
 

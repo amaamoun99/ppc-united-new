@@ -89,11 +89,11 @@ export default function GetInTouch() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative h-screen bg-stone-950 flex items-center justify-center overflow-hidden z-10">
+    <section ref={sectionRef} className="relative h-screen bg-blue-950 flex items-center justify-center overflow-hidden z-10">
       
       {/* --- BACKGROUND AMBIANCE --- */}
       <div className="absolute inset-0 z-0">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] bg-brand/10 rounded-full blur-[100px] animate-pulse-slow" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30vw] h-[30vw] bg-gradient-to-r from-blue-500/20 via-blue-400/15 to-blue-500/20 rounded-full blur-[50px] animate-pulse-slow" />
       </div>
 
       {/* --- LAYER 1: THE CTA (Visible Initially) --- */}
@@ -105,7 +105,7 @@ export default function GetInTouch() {
             HAVE AN IDEA?
         </h2>
         {/* Visual-only button label (The actual click happens on the container below) */}
-        <div className="text-brand font-mono uppercase tracking-widest text-sm animate-bounce mt-48">
+        <div className="text-blue-400 font-mono uppercase tracking-widest text-sm animate-bounce mt-48">
             ( Click to Open )
         </div>
       </div>
@@ -116,8 +116,8 @@ export default function GetInTouch() {
         ref={containerRef}
         onClick={!isOpen ? openForm : undefined}
         className={`
-            absolute z-20 bg-brand w-full h-full flex items-center justify-center transition-colors duration-700
-            ${!isOpen ? 'cursor-pointer hover:bg-brand-light' : 'bg-stone-100 cursor-default'}
+            absolute z-20 bg-gradient-to-br from-blue-700 via-blue-600 to-blue-700 w-full h-full flex items-center justify-center transition-colors duration-700
+            ${!isOpen ? 'cursor-pointer hover:from-blue-600 hover:via-blue-500 hover:to-blue-600' : 'bg-stone-100 cursor-default'}
         `}
       >
         {/* THE TRIGGER TEXT (Visible when closed) */}
@@ -146,26 +146,26 @@ export default function GetInTouch() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="group form-element opacity-0">
                         <label className="block text-xs font-mono text-stone-400 uppercase mb-2">My Name is</label>
-                        <input type="text" placeholder="John Doe" className="w-full bg-transparent border-b border-stone-300 py-2 text-xl text-stone-900 focus:outline-none focus:border-brand transition-colors" />
+                        <input type="text" placeholder="John Doe" className="w-full bg-transparent border-b border-stone-300 py-2 text-xl text-stone-900 focus:outline-none focus:border-blue-600 transition-colors" />
                     </div>
                     <div className="group form-element opacity-0">
                         <label className="block text-xs font-mono text-stone-400 uppercase mb-2">Email Address</label>
-                        <input type="email" placeholder="john@example.com" className="w-full bg-transparent border-b border-stone-300 py-2 text-xl text-stone-900 focus:outline-none focus:border-brand transition-colors" />
+                        <input type="email" placeholder="john@example.com" className="w-full bg-transparent border-b border-stone-300 py-2 text-xl text-stone-900 focus:outline-none focus:border-blue-600 transition-colors" />
                     </div>
                 </div>
 
                 <div className="group form-element opacity-0">
                     <label className="block text-xs font-mono text-stone-400 uppercase mb-2">Phone Number</label>
-                    <input type="tel" placeholder="+966 ..." className="w-full bg-transparent border-b border-stone-300 py-2 text-xl text-stone-900 focus:outline-none focus:border-brand transition-colors" />
+                    <input type="tel" placeholder="+966 ..." className="w-full bg-transparent border-b border-stone-300 py-2 text-xl text-stone-900 focus:outline-none focus:border-blue-600 transition-colors" />
                 </div>
 
                 <div className="group form-element opacity-0">
                     <label className="block text-xs font-mono text-stone-400 uppercase mb-2">Tell us about your project</label>
-                    <textarea rows="3" placeholder="We need a MEP solution for..." className="w-full bg-transparent border-b border-stone-300 py-2 text-xl text-stone-900 focus:outline-none focus:border-brand transition-colors resize-none" />
+                    <textarea rows="3" placeholder="We need a MEP solution for..." className="w-full bg-transparent border-b border-stone-300 py-2 text-xl text-stone-900 focus:outline-none focus:border-blue-600 transition-colors resize-none" />
                 </div>
 
                 <div className="pt-8 form-element opacity-0">
-                    <button className="w-full bg-stone-900 text-white py-6 rounded-none hover:bg-brand transition-colors text-lg font-bold tracking-widest uppercase">
+                    <button className="w-full bg-blue-900 text-white py-6 rounded-none hover:bg-blue-800 transition-colors text-lg font-bold tracking-widest uppercase">
                         Send Inquiry
                     </button>
                 </div>

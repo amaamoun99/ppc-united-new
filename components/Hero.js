@@ -71,8 +71,21 @@ export default function Hero() {
   return (
     <section 
       ref={containerRef} 
-      className="relative h-screen w-full overflow-hidden bg-black"
+      className="relative h-screen w-full overflow-hidden bg-gradient-to-b from-blue-950 via-blue-900 to-blue-800"
     >
+      {/* --- LOGO WATERMARK BACKGROUND --- */}
+      <div className="absolute inset-0 z-0 opacity-5 pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw]">
+          <Image
+            src="/logo.png"
+            alt=""
+            fill
+            className="object-contain"
+            style={{ filter: 'brightness(0) invert(1)' }}
+          />
+        </div>
+      </div>
+
       {/* --- LAYER 1: BLACK & WHITE VIDEO (Background) --- */}
       <div className="absolute inset-0 z-0">
         <video 
@@ -81,7 +94,7 @@ export default function Hero() {
             loop 
             muted 
             playsInline
-            className="w-full h-full object-cover filter grayscale brightness-50 contrast-125"
+            className="w-full h-full object-cover filter grayscale brightness-30 contrast-125 opacity-40"
         >
             <source src="https://media.istockphoto.com/id/2188908764/video/t-l-drone-point-view-of-workers-working-on-construction-site-hangzhou-china.mp4?s=mp4-640x640-is&k=20&c=ypeL9nCFAwyjYx-8ofMfbe1TkQyRTqsCZz16k9I6MqM=" type="video/mp4" />
         </video>
@@ -113,8 +126,8 @@ export default function Hero() {
       </div>
 
       {/* --- LAYER 3: CONTENT & OVERLAYS --- */}
-      {/* 1. Global Overlay */}
-      <div className="absolute inset-0 z-20 bg-black/30" />
+      {/* 1. Global Overlay with Blue Gradient */}
+      <div className="absolute inset-0 z-20 bg-gradient-to-b from-blue-950/40 via-blue-900/30 to-blue-800/40" />
 
       {/* 2. Text Container */}
       <div 
@@ -122,10 +135,10 @@ export default function Hero() {
         className="relative z-30 h-full flex flex-col items-center justify-center text-center px-4 pointer-events-none"
       >
         {/* --- GLASSY GLOW CARD WRAPPER --- */}
-        <div className="relative bg-black/40 backdrop-blur-md border border-white/10 p-10 md:p-16 rounded-3xl shadow-2xl shadow-black/50 overflow-hidden">
+        <div className="relative bg-blue-950/60 backdrop-blur-md border border-blue-500/20 p-10 md:p-16 rounded-3xl shadow-2xl shadow-blue-900/50 overflow-hidden">
             
-            {/* Optional: Inner Ambient Glow behind the logo */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-brand/20 blur-[80px] rounded-full -z-10" />
+            {/* Blue Gradient Glow behind the logo */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-gradient-to-r from-blue-500/30 via-blue-400/20 to-blue-500/30 blur-[80px] rounded-full -z-10" />
 
             <div className="overflow-hidden flex justify-center">
                 <div className="hero-text-line relative w-[300px] md:w-[500px] h-[120px] md:h-[200px]">
@@ -141,13 +154,13 @@ export default function Hero() {
             
             <div className="overflow-hidden mt-6">
                 <p className="hero-text-line text-xl md:text-3xl text-white font-light tracking-[0.2em] uppercase drop-shadow-lg">
-                    Inteligent <span className="text-brand font-bold">Solutions</span>
+                    Inteligent <span className="text-blue-400 font-bold">Solutions</span>
                 </p>
             </div>
             
-            {/* Decorative Lines */}
+            {/* Decorative Lines with Blue Gradient */}
             <div className="overflow-hidden flex justify-center mt-8">
-                 <div className="hero-text-line w-24 h-1 bg-brand shadow-[0_0_15px_rgba(var(--brand-rgb),0.8)]" />
+                 <div className="hero-text-line w-24 h-1 bg-gradient-to-r from-blue-500 via-blue-400 to-blue-500 shadow-[0_0_20px_rgba(0,168,255,0.6)]" />
             </div>
 
         </div>
@@ -155,8 +168,8 @@ export default function Hero() {
 
       {/* Scroll Indicator */}
       <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-30 flex flex-col items-center gap-2">
-         <span className="text-[10px] font-mono text-white/60 uppercase tracking-widest animate-pulse">Scroll</span>
-         <div className="w-[1px] h-16 bg-gradient-to-b from-white to-transparent opacity-50" />
+         <span className="text-[10px] font-mono text-blue-300/80 uppercase tracking-widest animate-pulse">Scroll</span>
+         <div className="w-[1px] h-16 bg-gradient-to-b from-blue-400 via-blue-500 to-transparent opacity-60" />
       </div>
 
     </section>

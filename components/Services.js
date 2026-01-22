@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { gsap, ScrollTrigger } from '@/lib/gsap';
+import Image from 'next/image';
 
 const services = [
   {
@@ -115,30 +116,40 @@ export default function Services() {
   }, []);
 
   return (
-    <section ref={triggerRef} className="relative overflow-hidden z-20 bg-slate-900">
+    <section ref={triggerRef} className="relative overflow-hidden z-20 bg-gradient-to-b from-blue-800 via-blue-700 to-blue-600">
       {/* Progress Bar (Top) */}
-      <div className="fixed top-0 left-0 w-full h-1 bg-gray-200 z-50 mix-blend-difference">
-          <div ref={progressBarRef} className="h-full bg-red-600 origin-left scale-x-0" />
+      <div className="fixed top-0 left-0 w-full h-1 bg-blue-900/30 z-50 mix-blend-difference">
+          <div ref={progressBarRef} className="h-full bg-gradient-to-r from-blue-500 via-blue-400 to-blue-500 origin-left scale-x-0" />
       </div>
 
       {/* Horizontal Container */}
       <div ref={sectionRef} className="flex h-screen w-[300%] overflow-hidden">
         
         {/* --- SERVICE 1: MEP --- */}
-        <div id="mep" className="service-slide w-screen h-screen flex-shrink-0 relative flex items-center justify-center bg-slate-900 text-white overflow-hidden">
+        <div id="mep" className="service-slide w-screen h-screen flex-shrink-0 relative flex items-center justify-center bg-blue-900 text-white overflow-hidden">
+            {/* Logo Watermark */}
+            {/* <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50vw] h-[50vw] opacity-5 pointer-events-none">
+                <Image
+                    src="/logo.png"
+                    alt=""
+                    fill
+                    className="object-contain"
+                    style={{ filter: 'brightness(0) invert(1)' }}
+                />
+            </div> */}
             <div className="absolute inset-0 opacity-10 pointer-events-none">
                 <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                    <path className="mep-line-path" d="M0,50 Q25,0 50,50 T100,50" fill="none" stroke="white" strokeWidth="0.5" />
+                    <path className="mep-line-path" d="M0,50 Q25,0 50,50 T100,50" fill="none" stroke="rgb(0,168,255)" strokeWidth="0.5" />
                 </svg>
             </div>
             
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 w-full max-w-7xl px-8 items-center gap-12">
                 <div className="space-y-6">
-                    <div className="text-blue-500 font-mono text-xl tracking-widest">01. SYSTEMS</div>
+                    <div className="text-blue-400 font-mono text-xl tracking-widest">01. SYSTEMS</div>
                     <h2 className="text-7xl md:text-9xl font-black uppercase tracking-tighter leading-none">
-                        M.E.P.<span className="text-blue-600">.</span>
+                        M.E.P.<span className="text-blue-500">.</span>
                     </h2>
-                    <p className="text-2xl text-slate-400 max-w-md">
+                    <p className="text-2xl text-blue-200/80 max-w-md">
                         {services[0].description}
                     </p>
                 </div>
@@ -146,28 +157,38 @@ export default function Services() {
                     <img 
                         src={services[0].image} 
                         alt="MEP Engineering" 
-                        className="w-full h-full object-cover rounded-2xl shadow-2xl border border-white/10"
+                        className="w-full h-full object-cover rounded-2xl shadow-2xl border border-blue-500/20"
                     />
                 </div>
             </div>
         </div>
 
-        {/* --- SERVICE 2: FINISHING --- */}
-        <div id="finishing" className="service-slide w-screen h-screen flex-shrink-0 relative flex items-center justify-center bg-stone-100 text-stone-900 overflow-hidden">
+{/* --- SERVICE 2: FINISHING --- */}
+<div id="finishing" className="service-slide w-screen h-screen flex-shrink-0 relative flex items-center justify-center bg-blue-600  text-white overflow-hidden">
+            {/* Logo Watermark */}
+            {/* <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50vw] h-[50vw] opacity-5 pointer-events-none">
+                <Image
+                    src="/logo.png"
+                    alt=""
+                    fill
+                    className="object-contain"
+                    style={{ filter: 'brightness(0) invert(1)' }}
+                />
+            </div> */}
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 w-full max-w-7xl px-8 items-center gap-12">
                 <div className="order-2 md:order-1 h-[500px] w-full relative">
                     <img 
                         src={services[1].image} 
                         alt="Luxury Finishing" 
-                        className="w-full h-full object-cover rounded-2xl shadow-2xl"
+                        className="w-full h-full object-cover rounded-2xl shadow-2xl border border-blue-400/20"
                     />
                 </div>
                 <div className="order-1 md:order-2 space-y-6 md:pl-20">
-                    <div className="text-amber-600 font-mono text-xl tracking-widest">02. ESTHETICS</div>
-                    <h2 className="text-7xl md:text-9xl font-black uppercase tracking-tighter leading-none text-stone-900">
-                        Finishing<span className="text-amber-600">.</span>
+                    <div className="text-blue-300 font-mono text-xl tracking-widest">02. ESTHETICS</div>
+                    <h2 className="text-7xl md:text-9xl font-black uppercase tracking-tighter leading-none text-white">
+                        Finishing<span className="text-blue-400">.</span>
                     </h2>
-                    <p className="text-2xl text-stone-600 max-w-md font-serif italic">
+                    <p className="text-2xl text-blue-100/90 max-w-md font-serif italic">
                         &ldquo;{services[1].description}&rdquo;
                     </p>
                 </div>
@@ -175,16 +196,26 @@ export default function Services() {
         </div>
 
         {/* --- SERVICE 3: MEDICAL --- */}
-        <div id="medical" className="service-slide w-screen h-screen flex-shrink-0 relative flex items-center justify-center bg-teal-950 text-white overflow-hidden">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-teal-500/20 rounded-full blur-[100px] medical-pulse" />
+        <div id="medical" className="service-slide w-screen h-screen flex-shrink-0 relative flex items-center justify-center bg-blue-500 text-white overflow-hidden">
+            {/* Logo Watermark */}
+            {/* <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50vw] h-[50vw] opacity-5 pointer-events-none z-0">
+                <Image
+                    src="/logo.png"
+                    alt=""
+                    fill
+                    className="object-contain"
+                    style={{ filter: 'brightness(0) invert(1)' }}
+                />
+            </div> */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-400/30 rounded-full blur-[100px] medical-pulse z-0" />
 
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 w-full max-w-7xl px-8 items-center gap-12">
                 <div className="space-y-6">
-                    <div className="text-teal-400 font-mono text-xl tracking-widest">03. HEALTHCARE</div>
+                    <div className="text-blue-300 font-mono text-xl tracking-widest">03. HEALTHCARE</div>
                     <h2 className="text-7xl md:text-9xl font-black uppercase tracking-tighter leading-none">
-                        Medi<span className="text-teal-400">cal</span>
+                        Medi<span className="text-blue-400">cal</span>
                     </h2>
-                    <p className="text-2xl text-teal-100/70 max-w-md">
+                    <p className="text-2xl text-blue-100/80 max-w-md">
                         {services[2].description}
                     </p>
                 </div>
@@ -192,12 +223,12 @@ export default function Services() {
                      <img 
                         src={services[2].image} 
                         alt="Medical Construction" 
-                        className="w-full h-full object-cover rounded-2xl shadow-2xl border border-white/10"
+                        className="w-full h-full object-cover rounded-2xl shadow-2xl border border-blue-400/20"
                     />
                 </div>
             </div>
         </div>
-
+        
       </div>
     </section>
   );

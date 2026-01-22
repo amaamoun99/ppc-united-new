@@ -72,13 +72,13 @@ export default function HorizontalTimeline() {
   return (
     <section 
       ref={triggerRef} 
-      className="relative overflow-hidden z-20 bg-stone-900"
+      className="relative overflow-hidden z-20 bg-gradient-to-b from-white via-blue-700 to-blue-800"
     >
       {/* Main Container - similar structure to Services */}
       <div ref={containerRef} className="h-screen flex items-center relative overflow-hidden">
         
         {/* Background Label */}
-        <div className="absolute top-12 left-6 md:left-12 text-stone-600 font-mono text-sm uppercase tracking-widest z-10 pointer-events-none">
+        <div className="absolute top-12 left-6 md:left-12 text-blue-300/60 font-mono text-sm uppercase tracking-widest z-10 pointer-events-none">
           Our History
         </div>
         
@@ -88,9 +88,9 @@ export default function HorizontalTimeline() {
           {/* Intro Card */}
           <div className="w-[300px] md:w-[400px] flex-shrink-0 text-white">
             <h2 className="text-4xl md:text-6xl font-bold leading-tight">
-              A Decade of <br/> <span className="text-brand">Excellence.</span>
+              A Decade of <br/> <span className="text-blue-400">Excellence.</span>
             </h2>
-            <p className="text-stone-400 mt-6 text-lg max-w-xs">
+            <p className="text-blue-200/80 mt-6 text-lg max-w-xs">
               From humble beginnings to kingdom-wide infrastructure.
             </p>
           </div>
@@ -98,19 +98,19 @@ export default function HorizontalTimeline() {
           {/* Milestone Cards */}
           {milestones.map((milestone) => (
             <div key={milestone.id} className="w-[350px] md:w-[500px] flex-shrink-0 group relative">
-              <div className="absolute -top-12 left-0 w-full h-[1px] bg-white/20 group-hover:bg-brand transition-colors duration-500">
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-brand rounded-full scale-0 group-hover:scale-100 transition-transform duration-300" />
+              <div className="absolute -top-12 left-0 w-full h-[1px] bg-white/20 group-hover:bg-blue-400 transition-colors duration-500">
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-blue-400 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300" />
               </div>
               
-              <span className="text-8xl md:text-9xl font-black text-white/5 group-hover:text-white/10 transition-colors duration-500 block mb-6 select-none -ml-2">
+              <span className="text-8xl md:text-9xl font-black text-white group-hover:text-blue-400 transition-colors duration-500 block mb-6 select-none -ml-2">
                 {milestone.year}
               </span>
               
-              <div className="relative pl-6 border-l border-white/20 group-hover:border-brand transition-colors duration-300">
-                <h3 className="text-3xl font-bold mb-3 text-white group-hover:text-brand transition-colors">
+              <div className="relative pl-6 border-l border-white/20 group-hover:border-blue-400 transition-colors duration-300">
+                <h3 className="text-3xl font-bold mb-3 text-white group-hover:text-blue-400 transition-colors">
                   {milestone.title}
                 </h3>
-                <p className="text-lg text-stone-400 leading-relaxed">
+                <p className="text-lg text-blue-200/80 leading-relaxed">
                   {milestone.description}
                 </p>
               </div>
