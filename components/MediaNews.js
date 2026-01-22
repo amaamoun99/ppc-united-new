@@ -139,7 +139,7 @@ export default function MediaNews() {
 function SpotlightCard({ item, index }) {
     const cardRef = useRef(null);
 
-    // Mouse tracking for "Spotlight" effect
+    // Mouse tracking for Spotlight effect
     const handleMouseMove = (e) => {
         const { left, top } = cardRef.current.getBoundingClientRect();
         const x = e.clientX - left;

@@ -11,7 +11,7 @@ export default function GetInTouch() {
   const containerRef = useRef(null); // The expanding container
   const buttonRef = useRef(null);    // The trigger button
   const formRef = useRef(null);      // The actual form content
-  const ctaTextRef = useRef(null);   // The "Ready to start" text
+  const ctaTextRef = useRef(null);   // The Ready to start text
 
   // 1. OPEN FORM ANIMATION
   const openForm = () => {
@@ -26,12 +26,12 @@ export default function GetInTouch() {
         ease: "power2.in"
     });
 
-    // B. "Morph" the button into the form container
+    // B. Morph the button into the form container
     // We do this by expanding the Clip Path from the center
     tl.to(containerRef.current, {
         clipPath: "inset(0% 0% 0% 0%)", // Expand to full size
         duration: 0.8,
-        ease: "expo.inOut" // The "Dramatic" easing
+        ease: "expo.inOut" // The Dramatic easing
     }, "-=0.2");
 
     // C. Animate the Form Elements IN (Staggered)
@@ -62,7 +62,7 @@ export default function GetInTouch() {
         ease: "power2.in"
     });
 
-    // B. Shrink container back to "Button" size
+    // B. Shrink container back to Button size
     tl.to(containerRef.current, {
         clipPath: "inset(45% 42% 45% 42%)", // Matches the initial button size roughly
         duration: 0.7,
@@ -81,7 +81,7 @@ export default function GetInTouch() {
   // 3. INITIAL SETUP
   useEffect(() => {
     // Set initial state of the container (It should look like the button initially)
-    // We use clip-path to "hide" the form parts and make the container look like a small box
+    // We use clip-path to hide the form parts and make the container look like a small box
     // Adjust these % values to match the button size perfectly
     gsap.set(containerRef.current, { 
         clipPath: "inset(45% 40% 45% 40%)" 
