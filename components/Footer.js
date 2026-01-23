@@ -152,7 +152,7 @@ export default function Footer() {
             <div className="flex justify-between items-end border-t border-blue-500/20 pt-8 text-blue-300/40 text-sm font-mono uppercase">
                 <span>&copy; {new Date().getFullYear()} PPC-United.</span>
                 <a href="https://maamoun.dev" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors">
-                    made with love by maamoun.dev
+                    made with love: maamoun.dev
                 </a>
                 <span>Riyadh, KSA</span>
             </div>

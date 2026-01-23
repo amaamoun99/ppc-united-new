@@ -3,67 +3,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { gsap } from '@/lib/gsap';
 import Link from 'next/link';
-
-// === Project Data ===
-const projectsData = [
-  {
-    id: 1,
-    name: 'Riyadh Hospital Complex',
-    location: 'Riyadh, KSA',
-    year: 2024,
-    category: 'medical',
-    description: 'A state-of-the-art medical facility focused on patient wellness and sustainable architecture.',
-    images: [
-      'https://images.pexels.com/photos/269077/pexels-photo-269077.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    ]
-  },
-  {
-    id: 2,
-    name: 'Jeddah Commercial Tower',
-    location: 'Jeddah, KSA',
-    year: 2023,
-    category: 'mep',
-    description: 'A 60-story commercial tower requiring complex HVAC, electrical, and plumbing solutions.',
-    images: [
-       'https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    ]
-  },
-  {
-    id: 3,
-    name: 'Luxury Villa Finishing',
-    location: 'Riyadh Diplomatic Quarter',
-    year: 2024,
-    category: 'finishing',
-    description: 'High-end residential finishing involving imported marble flooring and custom joinery.',
-    images: [
-      'https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    ]
-  },
-  {
-    id: 4,
-    name: 'Office Complex MEP',
-    location: 'Riyadh',
-    year: 2023,
-    category: 'mep',
-    description: 'Integrated mechanical and electrical systems for a multi-building office park.',
-    images: [
-      'https://images.pexels.com/photos/443383/pexels-photo-443383.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    ]
-  },
-  {
-    id: 5,
-    name: 'Residential Finishing',
-    location: 'Jeddah',
-    year: 2024,
-    category: 'finishing',
-    description: 'Modern apartment complex finishing with clean lines and premium fixtures.',
-    images: [
-      'https://images.pexels.com/photos/3797991/pexels-photo-3797991.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    ]
-  },
-];
-
-const categories = ['all', 'mep', 'finishing', 'medical'];
+import { projectsData, categories } from '@/lib/projectsData';
 
 export default function ProjectsPage() {
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -169,7 +109,7 @@ export default function ProjectsPage() {
 
                 {/* Category Badge */}
                 <div className="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-bold uppercase tracking-wider text-stone-700">
-                  {project.category}
+                  {project.categoryDisplay}
                 </div>
               </div>
 

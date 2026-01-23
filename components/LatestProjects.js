@@ -6,56 +6,12 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ReactLenis } from '@studio-freight/react-lenis'; // Import Smooth Scroll
 import Image from 'next/image';
 import Link from 'next/link';
+import { getFeaturedProjects, displayCategories } from '@/lib/projectsData';
 
 // Register ScrollTrigger
 gsap.registerPlugin(ScrollTrigger);
 
-const projects = [
-  { 
-    id: 1, 
-    title: 'Riyadh Medical City', 
-    category: 'Medical', 
-    image: 'https://images.pexels.com/photos/269077/pexels-photo-269077.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', 
-    year: '2025' 
-  },
-  { 
-    id: 2, 
-    title: 'Jeddah Tower', 
-    category: 'MEP', 
-    image: 'https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', 
-    year: '2024' 
-  },
-  { 
-    id: 3, 
-    title: 'Royal Villa', 
-    category: 'Finishing', 
-    image: 'https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', 
-    year: '2024' 
-  },
-  { 
-    id: 4, 
-    title: 'Al Khobar Clinic', 
-    category: 'Medical', 
-    image: 'https://images.pexels.com/photos/236380/pexels-photo-236380.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', 
-    year: '2025' 
-  },
-  { 
-    id: 5, 
-    title: 'Finance Plaza', 
-    category: 'MEP', 
-    image: 'https://images.pexels.com/photos/443383/pexels-photo-443383.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', 
-    year: '2023' 
-  },
-  { 
-    id: 6, 
-    title: 'Skyline Penthouse', 
-    category: 'Finishing', 
-    image: 'https://images.pexels.com/photos/3797991/pexels-photo-3797991.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', 
-    year: '2025' 
-  },
-];
-
-const categories = ['All', 'MEP', 'Finishing', 'Medical'];
+const categories = displayCategories;
 
 export default function LatestProjects() {
   const [activeCategory, setActiveCategory] = useState('All');
@@ -64,11 +20,22 @@ export default function LatestProjects() {
   const cursorLabelRef = useRef(null);
   const projectRefs = useRef([]); // To store refs for parallax
 
+  // Get featured projects and map to component format
+  const featuredProjects = useMemo(() => {
+    return getFeaturedProjects().map(project => ({
+      id: project.id,
+      title: project.title,
+      category: project.categoryDisplay,
+      image: project.images[0], // Use first image
+      year: String(project.year) // Convert to string for display
+    }));
+  }, []);
+
   const filteredProjects = useMemo(() => {
     return activeCategory === 'All' 
-      ? projects 
-      : projects.filter(p => p.category === activeCategory);
-  }, [activeCategory]);
+      ? featuredProjects 
+      : featuredProjects.filter(p => p.category === activeCategory);
+  }, [activeCategory, featuredProjects]);
 
   // 1. Entrance Animation & Parallax Setup
   useEffect(() => {
@@ -203,8 +170,9 @@ export default function LatestProjects() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-24">
             {filteredProjects.map((project, index) => (
-              <div 
-                  key={project.id} 
+              <Link
+                  key={project.id}
+                  href={`/projects/${project.id}`}
                   className={`project-card group relative flex flex-col gap-6 ${index % 2 === 1 ? 'md:translate-y-16' : ''}`} // Stagger grid layout for organic feel
               >
                 {/* Image Container */}
@@ -235,7 +203,7 @@ export default function LatestProjects() {
                        {project.year}
                     </span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
 

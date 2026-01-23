@@ -2,78 +2,10 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { gsap } from '@/lib/gsap'; // Ensure this path is correct
+import { gsap } from '@/lib/gsap';
 import Link from 'next/link';
-import Image from 'next/image'; // Optimized Next.js Image
-
-// === Stable Project Data (High Quality Pexels) ===
-const projectsData = [
-  {
-    id: 1,
-    name: 'Riyadh Hospital Complex',
-    location: 'Riyadh, KSA',
-    year: 2024,
-    category: 'medical',
-    description: 'A state-of-the-art medical facility focused on patient wellness and sustainable architecture. Features include automated MEP systems and sterile environment finishing.',
-    images: [
-      'https://images.pexels.com/photos/269077/pexels-photo-269077.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-      'https://images.pexels.com/photos/236380/pexels-photo-236380.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-      'https://images.pexels.com/photos/668300/pexels-photo-668300.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    ]
-  },
-  {
-    id: 2,
-    name: 'Jeddah Commercial Tower',
-    location: 'Jeddah, KSA',
-    year: 2023,
-    category: 'mep',
-    description: 'A 60-story commercial tower requiring complex HVAC, electrical, and plumbing solutions integrated into a modern glass facade.',
-    images: [
-       'https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-       'https://images.pexels.com/photos/443383/pexels-photo-443383.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-       'https://images.pexels.com/photos/374870/pexels-photo-374870.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    ]
-  },
-  {
-    id: 3,
-    name: 'Luxury Villa Finishing',
-    location: 'Riyadh Diplomatic Quarter',
-    year: 2024,
-    category: 'finishing',
-    description: 'High-end residential finishing involving imported marble flooring, custom joinery, and smart home integration.',
-    images: [
-      'https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-      'https://images.pexels.com/photos/276724/pexels-photo-276724.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-      'https://images.pexels.com/photos/3797991/pexels-photo-3797991.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    ]
-  },
-  {
-    id: 4,
-    name: 'Office Complex MEP',
-    location: 'Riyadh',
-    year: 2023,
-    category: 'mep',
-    description: 'Integrated mechanical and electrical systems for a multi-building office park, focusing on energy efficiency.',
-    images: [
-      'https://images.pexels.com/photos/443383/pexels-photo-443383.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-      'https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-      'https://images.pexels.com/photos/1106476/pexels-photo-1106476.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    ]
-  },
-  {
-    id: 5,
-    name: 'Residential Finishing',
-    location: 'Jeddah',
-    year: 2024,
-    category: 'finishing',
-    description: 'Modern apartment complex finishing, delivering clean lines, premium fixtures, and durable materials.',
-    images: [
-      'https://images.pexels.com/photos/3797991/pexels-photo-3797991.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-      'https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-      'https://images.pexels.com/photos/276724/pexels-photo-276724.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    ]
-  },
-];
+import Image from 'next/image';
+import { getProjectById } from '@/lib/projectsData';
 
 export default function ProjectDetailsPage() {
   const params = useParams();
@@ -83,7 +15,7 @@ export default function ProjectDetailsPage() {
   const mainImageRef = useRef(null);
 
   // Find the project by ID
-  const project = projectsData.find(p => p.id === parseInt(params.id));
+  const project = getProjectById(params.id);
 
   // 1. ENTRANCE ANIMATION (Simulates the transition)
   useEffect(() => {
@@ -148,7 +80,7 @@ export default function ProjectDetailsPage() {
     <div ref={containerRef} className="min-h-screen bg-stone-50 opacity-0"> {/* Start hidden for fade-in */}
       
       {/* --- FLOATING NAVIGATION --- */}
-      <nav className="fixed top-8 left-0 w-full z-50 px-6 md:px-12 flex justify-between items-start pointer-events-none">
+      <nav className="fixed top-24 left-0 w-full z-50 px-6 md:px-12 flex justify-between items-start pointer-events-none">
           {/* Back Button */}
           <button 
             onClick={handleBack}
@@ -157,13 +89,7 @@ export default function ProjectDetailsPage() {
             <span>←</span> Back
           </button>
 
-          {/* Close Icon (Alternative) */}
-          <button 
-            onClick={handleBack}
-            className="pointer-events-auto w-12 h-12 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors shadow-lg"
-          >
-            ✕
-          </button>
+          
       </nav>
 
 
@@ -188,7 +114,7 @@ export default function ProjectDetailsPage() {
              {/* Hero Title Overlay */}
              <div className="animate-in absolute bottom-8 left-8 md:bottom-12 md:left-12 text-white p-4">
                 <span className="inline-block px-3 py-1 border border-white/30 rounded-full bg-black/20 backdrop-blur-md text-xs font-mono uppercase tracking-widest mb-4">
-                    {project.category}
+                    {project.categoryDisplay}
                 </span>
                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-none">
                     {project.name}
@@ -238,7 +164,7 @@ export default function ProjectDetailsPage() {
                     </div>
                     <div>
                         <span className="block text-xs uppercase text-stone-500 mb-1">Scope</span>
-                        <p className="text-xl font-bold text-stone-900 capitalize">{project.category} Engineering</p>
+                        <p className="text-xl font-bold text-stone-900">{project.categoryDisplay} Engineering</p>
                     </div>
                 </div>
             </div>
@@ -257,7 +183,7 @@ export default function ProjectDetailsPage() {
                     </p>
                     <p>
                         The result is a facility that not only meets international standards but sets a new 
-                        benchmark for {project.category} construction in the region.
+                        benchmark for {project.categoryDisplay} construction in the region.
                     </p>
                  </div>
 
