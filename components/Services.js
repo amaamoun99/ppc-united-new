@@ -211,11 +211,11 @@ export default function Services() {
 
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 w-full max-w-7xl px-8 items-center gap-12">
                 <div className="space-y-6">
-                    <div className="text-blue-300 font-mono text-xl tracking-widest">03. HEALTHCARE</div>
-                    <h2 className="text-7xl md:text-9xl font-black uppercase tracking-tighter leading-none">
-                        Medi<span className="text-blue-400">cal</span>
+                    <div className="text-white font-mono text-xl tracking-widest font-bold">03. HEALTHCARE</div>
+                    <h2 className="text-7xl md:text-9xl font-black uppercase tracking-tighter leading-none text-white drop-shadow-2xl">
+                        Medi<span className="text-white">cal</span>
                     </h2>
-                    <p className="text-2xl text-blue-100/80 max-w-md">
+                    <p className="text-2xl text-white font-medium max-w-md leading-relaxed">
                         {services[2].description}
                     </p>
                 </div>

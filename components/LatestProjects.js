@@ -152,7 +152,7 @@ export default function LatestProjects() {
   return (
     // Wrap in ReactLenis for the "No Gravity" scroll feel
     <ReactLenis root options={{ lerp: 0.08, duration: 1.5, smoothTouch: true }}>
-      <section ref={containerRef} className="relative py-32 px-6 bg-slate-50 overflow-hidden cursor-none z-10 min-h-screen"> 
+      <section ref={containerRef} className="relative pt-32 pb-32 px-6 bg-slate-50 overflow-hidden cursor-none z-10 min-h-screen"> 
         
         {/* Background Subtle Gradient for depth */}
         <div className="absolute inset-0 bg-gradient-to-b from-blue-500 via-white to-white pointer-events-none" />
