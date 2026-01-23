@@ -20,6 +20,16 @@ export default function LatestProjects() {
   const cursorLabelRef = useRef(null);
   const projectRefs = useRef([]); // To store refs for parallax
 
+  // Helper function to map display category to project categoryDisplay
+  const mapDisplayCategoryToProjectCategory = (displayCategory) => {
+    const categoryMap = {
+      'All': 'All',
+      'MEP Works': 'MEP',
+      'Medical Finishing': 'Medical Finishing'
+    };
+    return categoryMap[displayCategory] || displayCategory;
+  };
+
   // Get featured projects and map to component format
   const featuredProjects = useMemo(() => {
     return getFeaturedProjects().map(project => ({
@@ -32,9 +42,12 @@ export default function LatestProjects() {
   }, []);
 
   const filteredProjects = useMemo(() => {
-    return activeCategory === 'All' 
-      ? featuredProjects 
-      : featuredProjects.filter(p => p.category === activeCategory);
+    if (activeCategory === 'All') {
+      return featuredProjects;
+    }
+    // Map display category to project categoryDisplay for comparison
+    const targetCategory = mapDisplayCategoryToProjectCategory(activeCategory);
+    return featuredProjects.filter(p => p.category === targetCategory);
   }, [activeCategory, featuredProjects]);
 
   // 1. Entrance Animation & Parallax Setup
