@@ -100,7 +100,7 @@ export default function Footer() {
             </div>
 
             {/* Bottom Section: Links & Info */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-12 pt-12">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-12 py-12">
                 {/* Column 1: Brand */}
                 <div className="col-span-1 md:col-span-2">
                     <div className="mb-6">
@@ -121,9 +121,9 @@ export default function Footer() {
                 <div>
                     <h4 className="text-sm font-mono text-blue-300/60 uppercase tracking-widest mb-6">Sitemap</h4>
                     <ul className="space-y-4">
-                        {['Projects', 'Services', 'News', 'About'].map(item => (
+                        {['Home','Projects', 'Contact', 'About'].map(item => (
                             <li key={item}>
-                                <a href="#" className="text-lg hover:text-blue-400 transition-colors flex items-center gap-2 group">
+                                <a href={item === 'Home' ? '/' : item === 'Projects' ? '/projects' : item === 'Contact' ? '/contact' : '/about'} className="text-lg hover:text-blue-400 transition-colors flex items-center gap-2 group">
                                     <span className="w-1 h-1 bg-blue-400 rounded-full scale-0 group-hover:scale-100 transition-transform" />
                                     {item}
                                 </a>
@@ -136,7 +136,7 @@ export default function Footer() {
                 <div>
                     <h4 className="text-sm font-mono text-blue-300/60 uppercase tracking-widest mb-6">Socials</h4>
                     <ul className="space-y-4">
-                        {['LinkedIn', 'Twitter', 'Instagram'].map(item => (
+                        {['LinkedIn'].map(item => (
                             <li key={item}>
                                 <a href="#" className="text-lg hover:text-blue-400 transition-colors flex items-center gap-2 group">
                                     <span className="w-1 h-1 bg-blue-400 rounded-full scale-0 group-hover:scale-100 transition-transform" />
@@ -151,6 +151,9 @@ export default function Footer() {
             {/* Footer Note */}
             <div className="flex justify-between items-end border-t border-blue-500/20 pt-8 text-blue-300/40 text-sm font-mono uppercase">
                 <span>&copy; {new Date().getFullYear()} PPC-United.</span>
+                <a href="https://maamoun.dev" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors">
+                    made with love by maamoun.dev
+                </a>
                 <span>Riyadh, KSA</span>
             </div>
         </div>
