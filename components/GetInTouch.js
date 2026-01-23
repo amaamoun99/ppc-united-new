@@ -89,11 +89,11 @@ export default function GetInTouch() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative h-screen bg-stone-950 flex items-center justify-center overflow-hidden z-10">
+    <section ref={sectionRef} className="relative h-screen bg-gradient-to-b from-blue-950 via-stone-950 to-stone-950 flex items-center justify-center overflow-hidden z-10">
       
       {/* --- BACKGROUND AMBIANCE --- */}
       <div className="absolute inset-0 z-0">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30vw] h-[30vw] bg-brand/10 rounded-full blur-[50px] animate-pulse-slow" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30vw] h-[30vw] bg-brand/10 rounded-full blur-[80px] animate-pulse-slow" />
       </div>
 
       {/* --- LAYER 1: THE CTA (Visible Initially) --- */}
