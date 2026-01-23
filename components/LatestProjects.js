@@ -162,7 +162,7 @@ export default function LatestProjects() {
                     ${activeCategory === cat ? 'bg-blue-900 text-white shadow-lg scale-105' : 'bg-white text-blue-900 hover:bg-blue-50 hover:scale-105'}
                   `}
                 >
-                  {cat.toUpperCase()}
+                  {cat}
                 </button>
               ))}
             </div>
