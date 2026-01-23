@@ -155,7 +155,7 @@ export default function LatestProjects() {
       <section ref={containerRef} className="relative py-32 px-6 bg-slate-50 overflow-hidden cursor-none z-10 min-h-screen"> 
         
         {/* Background Subtle Gradient for depth */}
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-100 via-white to-slate-100 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-500 via-white to-white pointer-events-none" />
 
         {/* Logo Watermark */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70vw] h-[70vw] opacity-[0.03] pointer-events-none mix-blend-multiply">

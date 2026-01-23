@@ -7,25 +7,25 @@ const milestones = [
   {
     id: 1,
     title: 'Founded',
-    year: '2010',
+    year: '2018',
     description: 'PPC-United was established with a vision to revolutionize engineering in Saudi Arabia.',
   },
   {
     id: 2,
     title: 'First Major MEP Project',
-    year: '2015',
+    year: '2019',
     description: 'Completed landmark MEP installation for a major commercial complex in Riyadh.',
   },
   {
     id: 3,
     title: 'Expansion to Medical Sector',
-    year: '2020',
+    year: '2023',
     description: 'Launched specialized division for healthcare infrastructure and medical facilities.',
   },
   {
     id: 4,
     title: 'Vision 2030 Partnership',
-    year: '2024',
+    year: 'now',
     description: 'Leading projects supporting Saudi Arabia&apos;s ambitious development goals.',
   },
 ];
