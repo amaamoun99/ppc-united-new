@@ -117,15 +117,15 @@ export default function Header() {
       >
         <div className="absolute inset-0 bg-noise opacity-5 pointer-events-none"></div>
         
-        <nav className="container mx-auto px-6 h-20 flex items-center justify-between relative z-50">
+        <nav className="container mx-auto px-6 h-30 flex items-center justify-between relative z-50">
           {/* LOGO */}
-          <Link href="/" className="relative z-50 h-20 w-auto flex items-center">
+          <Link href="/" className="relative z-50 h-30 w-auto flex items-center">
             <Image
               src="/logo.png"
               alt="PPC-United"
-              width={3000}
-              height={300}
-              className={`h-14 w-auto object-contain transition-all duration-300 ${isMenuOpen ? 'brightness-0 invert' : ''}`}
+              width={500}
+              height={500}
+              className={`h-16 w-auto object-contain transition-all duration-300 ${isMenuOpen ? 'brightness-0 invert' : ''}`}
               priority
             />
           </Link>

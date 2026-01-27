@@ -4,10 +4,12 @@ import { useEffect } from 'react';
 import { ScrollTrigger } from '@/lib/gsap';
 import Hero from '@/components/Hero';
 import Services from '@/components/Services';
+import ClientsPartners from '@/components/ClientsPartners';
 import LatestProjects from '@/components/LatestProjects';
 import MediaNews from '@/components/MediaNews';
 import GetInTouch from '@/components/GetInTouch';
 import HorizontalTimeline from '@/components/HorizontalTimeline';
+import AboutTeaser from '@/components/AboutTeaser';
 
 export default function Home() {
   // Global refresh once on mount to align all pins
@@ -32,7 +34,9 @@ export default function Home() {
     <main className="bg-stone-900">
       <Hero />
       <Services />
+      <ClientsPartners />
       <LatestProjects />
+      <AboutTeaser />
       <HorizontalTimeline />
       <MediaNews />
 

@@ -71,16 +71,16 @@ export default function Hero() {
   return (
     <section 
       ref={containerRef} 
-      className="relative h-screen w-full overflow-hidden bg-gradient-to-b from-blue-950 via-blue-900 to-blue-800"
+      className="relative h-screen w-full overflow-hidden bg-gradient-to-b from-black via-black to-black"
     >
       {/* --- LOGO WATERMARK BACKGROUND --- */}
       <div className="absolute inset-0 z-0 opacity-5 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw]">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100vw] h-[100vw]">
           <Image
             src="/logo.png"
             alt=""
             fill
-            className="object-contain"
+            className="object-contain scale-150"
             style={{ filter: 'brightness(0) invert(1)' }}
           />
         </div>
@@ -127,7 +127,7 @@ export default function Hero() {
 
       {/* --- LAYER 3: CONTENT & OVERLAYS --- */}
       {/* 1. Global Overlay with Blue Gradient */}
-      <div className="absolute inset-0 z-20 bg-gradient-to-b from-blue-950/40 via-blue-900/30 to-blue-800/40" />
+      {/* <div className="absolute inset-0 z-20 bg-gradient-to-b from-blue-950/40 via-blue-900/30 to-blue-800/40" /> */}
 
       {/* 2. Text Container */}
       <div 
@@ -135,8 +135,11 @@ export default function Hero() {
         className="relative z-30 h-full flex flex-col items-center justify-center text-center px-4 pointer-events-none"
       >
         {/* --- GLASSY GLOW CARD WRAPPER --- */}
-        <div className="relative bg-blue-950/60 backdrop-blur-md border border-blue-500/20 p-10 md:p-16 rounded-3xl shadow-2xl shadow-blue-900/50 overflow-hidden">
+        <div className="relative bg--950/60 backdrop-blur-md border border-blue-500/20 p-10 md:p-16 rounded-3xl shadow-2xl shadow-blue-900/50 overflow-hidden">
             
+            {/* Dark circular glow directly behind the logo */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[260px] h-[260px] md:w-[380px] md:h-[380px] rounded-full bg-white/80 blur-[60px] -z-20" />
+
             {/* Blue Gradient Glow behind the logo */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-gradient-to-r from-blue-500/30 via-blue-400/20 to-blue-500/30 blur-[80px] rounded-full -z-10" />
 
@@ -146,21 +149,22 @@ export default function Hero() {
                         src="/logo.png"
                         alt="PPC-United"
                         fill
-                        className="object-contain drop-shadow-xl"
+
+                        className="object-contain drop-shadow-xl scale-100"
                         priority
                     />
                 </div>
             </div>
             
-            <div className="overflow-hidden mt-6">
+            {/* <div className="overflow-hidden mt-6">
                 <p className="hero-text-line text-xl md:text-3xl text-white font-light tracking-[0.2em] uppercase drop-shadow-lg">
                     Inteligent <span className="text-blue-400 font-bold">Solutions</span>
                 </p>
-            </div>
+            </div> */}
             
             {/* Decorative Lines with Blue Gradient */}
             <div className="overflow-hidden flex justify-center mt-8">
-                 <div className="hero-text-line w-24 h-1 bg-gradient-to-r from-blue-500 via-blue-400 to-blue-500 shadow-[0_0_20px_rgba(0,168,255,0.6)]" />
+                 <div className="hero-text-line w-24 h-1 bg-gradient-to-r from-blue-500 via-blue-600 to-blue-500 shadow-[0_0_20px_rgba(0,168,255,0.6)]" />
             </div>
 
         </div>

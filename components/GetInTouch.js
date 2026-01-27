@@ -64,7 +64,7 @@ export default function GetInTouch() {
 
     // B. Shrink container back to Button size
     tl.to(containerRef.current, {
-        clipPath: "inset(45% 42% 45% 42%)", // Matches the initial button size roughly
+        clipPath: "inset(45% 30% 45% 30%)", // Matches the initial button size roughly
         duration: 0.7,
         ease: "expo.inOut"
     });
@@ -84,7 +84,7 @@ export default function GetInTouch() {
     // We use clip-path to hide the form parts and make the container look like a small box
     // Adjust these % values to match the button size perfectly
     gsap.set(containerRef.current, { 
-        clipPath: "inset(45% 40% 45% 40%)" 
+        clipPath: "inset(45% 30% 45% 30%)" 
     });
   }, []);
 
@@ -122,7 +122,7 @@ export default function GetInTouch() {
       >
         {/* THE TRIGGER TEXT (Visible when closed) */}
         {!isOpen && (
-            <span className="text-white font-bold text-xl tracking-widest uppercase absolute z-30 pointer-events-none">
+            <span className="text-white font-bold text-xl tracking-widest uppercase absolute z-30 pointer-events-none ">
                 Lets work Together
             </span>
         )}

@@ -140,11 +140,14 @@ function TeamMember({ member }) {
     const x = e.clientX - left;
     const y = e.clientY - top;
 
-    // Move the mask (Reveal color image)
+    // Lens radius in pixels (controls light area size)
+    const lensRadius = 140;
+
+    // Move the mask so the light area stays centered on the cursor
     gsap.to(colorImageRef.current, {
         css: { 
-            WebkitMaskPosition: `${x - 100}px ${y - 100}px`, // Center 200px mask
-            maskPosition: `${x - 100}px ${y - 100}px` 
+            WebkitMaskPosition: `${x - lensRadius}px ${y - lensRadius}px`,
+            maskPosition: `${x - lensRadius}px ${y - lensRadius}px` 
         },
         duration: 0.1,
         ease: "power1.out"
@@ -170,12 +173,12 @@ function TeamMember({ member }) {
                 ref={colorImageRef}
                 className="absolute inset-0 w-full h-full pointer-events-none"
                 style={{
-                    WebkitMaskImage: "radial-gradient(circle 100px at center, black 100%, transparent 100%)",
-                    maskImage: "radial-gradient(circle 100px at center, black 100%, transparent 100%)",
+                    WebkitMaskImage: "radial-gradient(circle 140px at center, black 100%, transparent 100%)",
+                    maskImage: "radial-gradient(circle 140px at center, black 100%, transparent 100%)",
                     WebkitMaskRepeat: "no-repeat",
                     maskRepeat: "no-repeat",
-                    WebkitMaskPosition: "-200px -200px", // Start hidden
-                    maskPosition: "-200px -200px"
+                    WebkitMaskPosition: "-280px -280px", // Start hidden (off-canvas)
+                    maskPosition: "-280px -280px"
                 }}
             >
                 <img 
