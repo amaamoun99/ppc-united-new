@@ -147,7 +147,7 @@ export default function LatestProjects() {
           />
         </div>
         
-        {/* Custom Cursor */}
+        {/* Custom Cursor — Circle + View */}
         <div 
           ref={cursorRef} 
           className="fixed top-0 left-0 w-24 h-24 bg-blue-900/90 backdrop-blur-sm rounded-full pointer-events-none z-50 flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 scale-0 opacity-0 shadow-2xl"
@@ -186,7 +186,7 @@ export default function LatestProjects() {
               <Link
                   key={project.id}
                   href={`/projects/${project.id}`}
-                  className={`project-card group relative flex flex-col gap-6 ${index % 2 === 1 ? 'md:translate-y-16' : ''}`} // Stagger grid layout for organic feel
+                  className={`project-card project-card-trigger group relative flex flex-col gap-6 cursor-none ${index % 2 === 1 ? 'md:translate-y-16' : ''}`} // Stagger grid layout for organic feel
               >
                 {/* Image Container */}
                 <div className="project-card-trigger relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-stone-200 shadow-xl transition-shadow duration-500 group-hover:shadow-2xl">
@@ -268,7 +268,7 @@ function ViewAllProjectsButton() {
   }, []);
 
   return (
-    <Link href="/projects">
+    <a href="/projects">
       <button ref={buttonRef} className="group/btn relative overflow-hidden bg-blue-900 text-white px-12 py-5 rounded-full font-bold text-lg tracking-wider uppercase transition-all duration-300 hover:bg-blue-800 hover:shadow-2xl hover:shadow-blue-900/50">
               <span className="relative flex items-center gap-4">
           <span ref={textRef} className="inline-block">View All Projects</span>
@@ -276,6 +276,6 @@ function ViewAllProjectsButton() {
         </span>
         <span className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
       </button>
-    </Link>
+    </a>
   );
 }

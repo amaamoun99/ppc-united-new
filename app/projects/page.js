@@ -9,6 +9,8 @@ export default function ProjectsPage() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const containerRef = useRef(null);
   const cardsRef = useRef([]);
+  const cursorRef = useRef(null);
+  const cursorLabelRef = useRef(null);
 
   // Filter projects
   const filteredProjects = useMemo(() => {
@@ -47,9 +49,53 @@ export default function ProjectsPage() {
     );
   }, [selectedCategory]);
 
+  // Custom Cursor Logic
+  useEffect(() => {
+    const cursor = cursorRef.current;
+    const label = cursorLabelRef.current;
+    if (!cursor || !label) return;
+
+    const moveCursor = (e) => {
+      gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.6, ease: 'power3.out' });
+    };
+
+    const hoverCard = () => {
+      gsap.to(cursor, { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(1.2)' });
+      gsap.to(label, { opacity: 1, duration: 0.3 });
+    };
+
+    const leaveCard = () => {
+      gsap.to(cursor, { scale: 0, opacity: 0, duration: 0.3 });
+      gsap.to(label, { opacity: 0, duration: 0.3 });
+    };
+
+    const cards = document.querySelectorAll('.project-card');
+    cards.forEach(card => {
+      card.addEventListener('mouseenter', hoverCard);
+      card.addEventListener('mouseleave', leaveCard);
+    });
+
+    window.addEventListener('mousemove', moveCursor);
+    return () => {
+      window.removeEventListener('mousemove', moveCursor);
+      cards.forEach(card => {
+        card.removeEventListener('mouseenter', hoverCard);
+        card.removeEventListener('mouseleave', leaveCard);
+      });
+    };
+  }, [filteredProjects.length]);
+
   return (
-    <div ref={containerRef} className="min-h-screen bg-stone-50 relative overflow-hidden">
+    <div ref={containerRef} className="min-h-screen bg-stone-50 relative overflow-hidden cursor-none">
       
+      {/* Custom Cursor — Circle + View */}
+      <div 
+        ref={cursorRef} 
+        className="fixed top-0 left-0 w-24 h-24 bg-blue-900/90 backdrop-blur-sm rounded-full pointer-events-none z-50 flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 scale-0 opacity-0 shadow-2xl"
+      >
+        <span ref={cursorLabelRef} className="text-white text-xs font-bold uppercase tracking-widest opacity-0">View</span>
+      </div>
+
       <div className="container mx-auto px-6 pt-32 pb-24">
         
         {/* Page Header */}
@@ -88,7 +134,7 @@ export default function ProjectsPage() {
               key={project.id}
               href={`/projects/${project.id}`}
               ref={(el) => (cardsRef.current[index] = el)}
-              className="project-card group cursor-pointer perspective-1000 block"
+              className="project-card group cursor-none perspective-1000 block"
             >
               {/* Image Container */}
               <div className="relative aspect-[4/3] mb-6 rounded-xl overflow-hidden bg-stone-200 shadow-md transition-all duration-500 group-hover:shadow-xl group-hover:-translate-y-2">
@@ -99,12 +145,10 @@ export default function ProjectsPage() {
                 />
                 <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/10" />
                 
-                {/* Hover Overlay Icon */}
-                <div className="absolute bottom-4 right-4 bg-white text-stone-900 w-10 h-10 rounded-full flex items-center justify-center opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 12h14"/>
-                    <path d="m12 5 7 7-7 7"/>
-                  </svg>
+                {/* Hover Overlay — Hammer + View */}
+                <div className="absolute bottom-4 right-4 flex items-center gap-2 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 drop-shadow-lg">
+                 
+                  <span className="text-white text-xs font-bold uppercase tracking-widest">View</span>
                 </div>
 
                 {/* Category Badge */}

@@ -55,7 +55,22 @@ section {
   }
 }
 
-/* Custom cursor styles */
+/* Custom Engineering Cursor — Hammer */
+/* Default cursor: brand-blue hammer */
+html, body {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32' fill='none'%3E%3Cg transform='rotate(-15 16 16)'%3E%3Crect x='14' y='12' width='4' height='18' rx='1.5' fill='%23a0522d' stroke='white' stroke-width='1'/%3E%3Crect x='14' y='13' width='2' height='16' rx='0.5' fill='%23b8733d' opacity='0.5'/%3E%3Crect x='6' y='4' width='20' height='10' rx='2' fill='%2300478f' stroke='white' stroke-width='1'/%3E%3Crect x='6' y='4' width='20' height='5' rx='2' fill='%23005baf' opacity='0.4'/%3E%3Crect x='23' y='6' width='4' height='6' rx='1' fill='%23003d73' stroke='white' stroke-width='0.5'/%3E%3C/g%3E%3C/svg%3E") 3 3, auto;
+}
+
+/* Pointer cursor for clickable elements: brighter blue hammer */
+a, button, [role="button"], input[type="submit"], input[type="button"], select, summary, label[for], .cursor-pointer {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32' fill='none'%3E%3Cg transform='rotate(-15 16 16)'%3E%3Crect x='14' y='12' width='4' height='18' rx='1.5' fill='%23a0522d' stroke='white' stroke-width='1'/%3E%3Crect x='14' y='13' width='2' height='16' rx='0.5' fill='%23b8733d' opacity='0.5'/%3E%3Crect x='6' y='4' width='20' height='10' rx='2' fill='%2300a8ff' stroke='white' stroke-width='1'/%3E%3Crect x='6' y='4' width='20' height='5' rx='2' fill='%234fc3f7' opacity='0.4'/%3E%3Crect x='23' y='6' width='4' height='6' rx='1' fill='%230077cc' stroke='white' stroke-width='0.5'/%3E%3C/g%3E%3C/svg%3E") 3 3, pointer !important;
+}
+
+/* Hide cursor on project cards */
+.project-card, .project-card-trigger, .project-card * {
+  cursor: none !important;
+}
+
 .cursor-spotlight {
   cursor: none;
 }

@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap'; 
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Image from 'next/image';
-import { Plus, Minus } from 'lucide-react'; 
 
 // Register GSAP plugin safely
 if (typeof window !== 'undefined') {
@@ -25,23 +24,23 @@ const featuredClients = [
   { name: 'Qiddiya', logo: '/images/clients/qiddiya.jpeg' },
 ];
 
-const moreClients = [
-
-  { name: 'Osool', logo: '/images/clients/osool.jpeg' },
-  { name: 'Bwabet El Re3aia', logo: '/images/clients/bwabet elre3aia.jpeg' },
-  { name: 'Ministry of Health', logo: '/images/clients/ministry of health.jpeg' },
-  { name: 'Qiddiya', logo: '/images/clients/qiddiya.jpeg' },
+// Combine all clients for velocity bar (duplicate for seamless loop)
+const allClients = [
   { name: 'Siemens', logo: '/images/clients/siemens.jpeg' },
   { name: 'Dar Al Arkan', logo: '/images/clients/dar elarkan.jpeg' },
   { name: 'Saudi Ceramics', logo: '/images/clients/saudi ceramics.jpeg' },
   { name: 'Beckman Coulter', logo: '/images/clients/beckman.jpeg' },
   { name: 'El Osiem', logo: '/images/clients/elosiem.jpeg' },
   { name: 'El Saedan', logo: '/images/clients/elsaedan.jpeg' },
+  { name: 'Osool', logo: '/images/clients/osool.jpeg' },
+  { name: 'Bwabet El Re3aia', logo: '/images/clients/bwabet elre3aia.jpeg' },
+  { name: 'Ministry of Health', logo: '/images/clients/ministry of health.jpeg' },
+  { name: 'Qiddiya', logo: '/images/clients/qiddiya.jpeg' },
 ];
 
 export default function ClientsPartners() {
-  const [isExpanded, setIsExpanded] = useState(false);
   const containerRef = useRef(null);
+  const velocityBarRef = useRef(null);
   
   // 2. INITIAL ANIMATION (Floating & Entrance)
   useEffect(() => {
@@ -82,43 +81,33 @@ export default function ClientsPartners() {
     return () => ctx.revert();
   }, []);
 
-  // 3. EXPANSION ANIMATION LOGIC
+  // 3. VELOCITY BAR ANIMATION
   useEffect(() => {
-    if (isExpanded) {
-      // Animate new bubbles popping in
-      gsap.fromTo(
-        '.hidden-bubble',
-        { scale: 0, opacity: 0, y: 20 },
-        {
-          scale: 1,
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          stagger: {
-            amount: 0.8,
-            grid: 'auto',
-            from: 'center', // Bubbles explode from center
-          },
-          ease: 'elastic.out(1, 0.5)',
-        }
-      );
+    if (velocityBarRef.current) {
+      const bar = velocityBarRef.current;
+      const content = bar.querySelector('.velocity-content');
+      
+      if (content) {
+        // Get the width of the content
+        const contentWidth = content.scrollWidth / 2; // Divide by 2 because we duplicate the content
+        
+        // Create infinite scroll animation
+        gsap.to(content, {
+          x: -contentWidth,
+          duration: 20,
+          ease: 'none',
+          repeat: -1,
+        });
+      }
     }
-  }, [isExpanded]);
-
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
-  };
+  }, []);
 
   return (
     <section
       ref={containerRef}
       className="relative pt-32 pb-16 px-4 overflow-hidden bg-gradient-to-b from-blue-500 via-white to-white"
     >
-      {/* Background Elements */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-[20%] -right-[10%] w-[600px] h-[600px] bg-blue-200/20 rounded-full blur-3xl" />
-        <div className="absolute top-[40%] -left-[10%] w-[500px] h-[500px] bg-purple-200/20 rounded-full blur-3xl" />
-      </div>
+      
 
 
       <div className="container mx-auto max-w-7xl relative z-10 text-center">
@@ -157,48 +146,39 @@ export default function ClientsPartners() {
               </div>
               
               {/* Hover Tooltip/Name */}
-              <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm font-semibold text-slate-700 whitespace-nowrap">
+              {/* <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm font-semibold text-slate-700 whitespace-nowrap">
                 {client.name}
-              </div>
+              </div> */}
             </div>
           ))}
 
-          {/* 2. Hidden Clients (Conditional Render) */}
-          {isExpanded &&
-            moreClients.map((client, index) => (
+        </div>
+
+        {/* VELOCITY BAR */}
+        <div 
+          ref={velocityBarRef}
+          className="mt-20 relative overflow-hidden pb-10"
+        >
+          <div className="velocity-content flex items-center gap-6 md:gap-8 will-change-transform">
+            {/* Duplicate content for seamless loop */}
+            {[...allClients, ...allClients].map((client, index) => (
               <div
-                key={`more-${index}`}
-                className="hidden-bubble group relative w-full aspect-square max-w-24 md:max-w-28"
+                key={`velocity-${index}`}
+                className="flex-shrink-0 group relative w-20 h-20 md:w-24 md:h-24"
               >
-                <div className="client-bubble-inner w-full h-full rounded-full bg-white shadow-[0_8px_30px_-5px_rgba(0,0,0,0.05)] border border-slate-100 flex items-center justify-center p-4 transition-all duration-300 group-hover:scale-110">
+                <div className="w-full h-full rounded-full bg-white shadow-[0_8px_30px_-5px_rgba(0,0,0,0.1)] border border-slate-100 flex items-center justify-center p-2 md:p-3 transition-all duration-300 group-hover:shadow-[0_15px_50px_-10px_rgba(59,130,246,0.3)] group-hover:scale-110">
                   <div className="relative w-full h-full flex items-center justify-center">
                     <Image 
                       src={client.logo} 
                       alt={client.name} 
                       fill 
-                      className="object-contain p-1 opacity-80" 
+                      className="object-contain p-1 md:p-1.5" 
                     />
                   </div>
                 </div>
               </div>
             ))}
-        </div>
-
-        {/* EXPAND BUTTON */}
-        <div className="mt-16">
-          <button
-            onClick={toggleExpand}
-            className="group relative inline-flex items-center gap-2 px-8 py-4 bg-white text-slate-900 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden"
-          >
-            <span className="absolute inset-0 bg-gradient-to-r from-blue-50 to-purple-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            
-            <div className="relative flex items-center gap-2">
-              <span>{isExpanded ? 'Show Less' : `View All ${featuredClients.length + moreClients.length} Partners`}</span>
-              <div className={`transition-transform duration-500 ${isExpanded ? 'rotate-180' : 'rotate-0'}`}>
-                {isExpanded ? <Minus size={18} /> : <Plus size={18} />}
-              </div>
-            </div>
-          </button>
+          </div>
         </div>
 
       </div>

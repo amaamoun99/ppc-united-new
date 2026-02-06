@@ -26,7 +26,7 @@ const milestones = [
   {
     id: 4,
     title: 'Vision 2030 Partnership',
-    year: '2024',
+    year: 'now',
     description: 'Leading projects supporting Saudi Arabia\'s ambitious development goals.',
   },
 ];
@@ -188,10 +188,7 @@ function TeamMember({ member }) {
                 />
             </div>
 
-            {/* Optional: Lens Border UI */}
-            <div className="absolute top-4 right-4 bg-white/10 backdrop-blur-md px-3 py-1 rounded-full text-xs font-mono text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                INSPECT
-            </div>
+          
         </div>
 
         <h3 className="text-2xl font-bold text-stone-900">{member.name}</h3>
