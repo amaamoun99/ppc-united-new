@@ -114,9 +114,9 @@ export default function MediaNews() {
         </div>
 
         {/* --- CTA BUTTON --- */}
-        <div className="m-20 flex justify-center">
+        {/* <div className="m-20 flex justify-center">
           <ViewAllNewsButton />
-        </div>
+        </div> */}
       </div>
 
       {/* --- BACKGROUND DECORATION --- */}
