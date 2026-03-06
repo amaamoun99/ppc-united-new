@@ -6,15 +6,16 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ReactLenis } from '@studio-freight/react-lenis'; // Import Smooth Scroll
 import Image from 'next/image';
 import Link from 'next/link';
-import { getFeaturedProjects, displayCategories } from '@/lib/projectsData';
+import { displayCategories } from '@/lib/projectsData';
 
 // Register ScrollTrigger
 gsap.registerPlugin(ScrollTrigger);
 
 const categories = displayCategories;
 
-export default function LatestProjects() {
+export default function LatestProjects({ onContentReady }) {
   const [activeCategory, setActiveCategory] = useState('All');
+  const [projects, setProjects] = useState([]);
   const containerRef = useRef(null);
   const cursorRef = useRef(null);
   const cursorLabelRef = useRef(null);
@@ -30,16 +31,18 @@ export default function LatestProjects() {
     return categoryMap[displayCategory] || displayCategory;
   };
 
-  // Get featured projects and map to component format
+  // Get featured, active projects; API returns priority DESC, preserve order
   const featuredProjects = useMemo(() => {
-    return getFeaturedProjects().map(project => ({
-      id: project.id,
-      title: project.title,
-      category: project.categoryDisplay,
-      image: project.images[0], // Use first image
-      year: String(project.year) // Convert to string for display
-    }));
-  }, []);
+    return projects
+      .filter((project) => project.isFeatured && project.isActive !== false)
+      .map((project) => ({
+        id: project.id,
+        title: project.title,
+        category: project.categoryDisplay || project.category,
+        image: project.images?.[0],
+        year: project.year ? String(project.year) : new Date(project.createdAt).getFullYear().toString(),
+      }));
+  }, [projects]);
 
   const filteredProjects = useMemo(() => {
     if (activeCategory === 'All') {
@@ -49,6 +52,30 @@ export default function LatestProjects() {
     const targetCategory = mapDisplayCategoryToProjectCategory(activeCategory);
     return featuredProjects.filter(p => p.category === targetCategory);
   }, [activeCategory, featuredProjects]);
+
+  // Fetch projects from API
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const res = await fetch('/api/projects');
+        if (!res.ok) return;
+        const data = await res.json();
+        setProjects(data || []);
+      } catch (err) {
+        console.error('Failed to load projects', err);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  // Notify parent when dynamic content has loaded so ScrollTrigger can refresh (fixes layout after images load)
+  useEffect(() => {
+    if (typeof onContentReady !== 'function') return;
+    const t1 = setTimeout(() => onContentReady(), 0);
+    const t2 = setTimeout(() => onContentReady(), 450);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [projects.length, onContentReady]);
 
   // 1. Entrance Animation & Parallax Setup
   useEffect(() => {
@@ -192,14 +219,18 @@ export default function LatestProjects() {
                 <div className="project-card-trigger relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-stone-200 shadow-xl transition-shadow duration-500 group-hover:shadow-2xl">
                    {/* Parallax Image Wrapper */}
                    <div className="relative w-full h-[120%] -top-[10%]">
-                      <Image 
+                      {project.image ? (
+                        <Image 
                           src={project.image} 
                           fill 
-                          className="object-cover transition-transform duration-700 ease-out group-hover:scale-105" // Subtle zoom on hover, parallax handles the Y movement
+                          className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                           alt={project.title}
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                           priority={index < 3}
-                      /> 
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center text-blue-900/30 text-sm font-medium">No image</div>
+                      )}
                    </div>
                    
                    {/* Overlay */}

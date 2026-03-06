@@ -1,37 +1,14 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { gsap, ScrollTrigger } from '@/lib/gsap';
 import Link from 'next/link';
 
-const newsItems = [
-  {
-    id: 1,
-    title: 'PPC-United Secures Landmark Riyadh Metro Contract',
-    excerpt: 'A defining moment for urban infrastructure in the capital.',
-    date: '2024-01-15',
-    category: 'CONTRACTS'
-  },
-  {
-    id: 2,
-    title: 'New Medical Wing: Zero-Carbon Initiative',
-    excerpt: 'Pioneering sustainable healthcare construction in Jeddah.',
-    date: '2024-02-20',
-    category: 'SUSTAINABILITY'
-  },
-  {
-    id: 3,
-    title: 'Strategic Partnership with Ministry of Health',
-    excerpt: 'Aligning with Vision 2030 to transform national care.',
-    date: '2024-03-10',
-    category: 'PARTNERSHIP'
-  },
-];
-
-export default function MediaNews() {
+export default function MediaNews({ onContentReady }) {
   const sectionRef = useRef(null);
   const marqueeInnerRef = useRef(null);
   const rafIdRef = useRef(null);
+  const [newsItems, setNewsItems] = useState([]);
   
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -87,6 +64,41 @@ export default function MediaNews() {
     };
   }, []);
 
+  // Load featured, published news from API; sort by priority DESC
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        const res = await fetch('/api/news');
+        if (!res.ok) return;
+        const data = await res.json();
+        const featured = (data || [])
+          .filter((item) => item.isFeatured && item.published)
+          .sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0))
+          .map((item) => ({
+            ...item,
+            date: item.publishedAt
+              ? new Date(item.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+              : '—',
+            category: item.category || 'News',
+            coverImage: (item.images && item.images[0]) || null,
+          }));
+        setNewsItems(featured);
+      } catch (err) {
+        console.error('Failed to load news', err);
+      }
+    };
+
+    fetchNews();
+  }, []);
+
+  // Notify parent when dynamic content has loaded so ScrollTrigger can refresh (fixes layout after images load)
+  useEffect(() => {
+    if (typeof onContentReady !== 'function') return;
+    const t1 = setTimeout(() => onContentReady(), 0);
+    const t2 = setTimeout(() => onContentReady(), 450);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [newsItems.length, onContentReady]);
+
   return (
     <section 
         ref={sectionRef} 
@@ -111,6 +123,11 @@ export default function MediaNews() {
             {newsItems.map((item, index) => (
                 <SpotlightCard key={item.id} item={item} index={index} />
             ))}
+            {newsItems.length === 0 && (
+              <p className="col-span-full text-blue-200/70 text-sm">
+                No featured news yet. Check back soon.
+              </p>
+            )}
         </div>
 
       </div>
@@ -145,19 +162,25 @@ function SpotlightCard({ item, index }) {
     };
 
     return (
+        <Link href={`/news/${item.slug || item.id}`}>
         <article 
             ref={cardRef}
             onMouseMove={handleMouseMove}
-            className="group relative bg-blue-900/30 rounded-none border border-blue-500/20 p-8 overflow-hidden transition-colors hover:bg-blue-900/50"
+            className="group relative bg-blue-900/30 rounded-none border border-blue-500/20 overflow-hidden transition-colors hover:bg-blue-900/50"
         >
             {/* The Spotlight Gradient Overlay with Blue */}
             <div 
-                className="pointer-events-none absolute -inset-px opacity-0 transition duration-300 group-hover:opacity-100"
+                className="pointer-events-none absolute -inset-px opacity-0 transition duration-300 group-hover:opacity-100 z-10"
                 style={{
                     background: `radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(0,168,255,0.15), transparent 40%)`
                 }}
             />
-            
+            {item.coverImage && (
+                <div className="relative w-full aspect-[16/10] overflow-hidden">
+                    <img src={item.coverImage} alt="" className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                </div>
+            )}
+            <div className="p-8 relative z-10">
             {/* Date Badge */}
             <div className="flex justify-between items-start mb-8 opacity-70">
                 <span className="font-mono text-xs border border-blue-400/30 px-2 py-1 rounded text-blue-300">
@@ -186,7 +209,9 @@ function SpotlightCard({ item, index }) {
                 </span>
                 <span className="transform group-hover/btn:translate-x-2 transition-transform duration-300">→</span>
             </div>
+            </div>
         </article>
+        </Link>
     );
 }
 

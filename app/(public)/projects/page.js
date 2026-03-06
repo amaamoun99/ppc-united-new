@@ -3,35 +3,59 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { gsap } from '@/lib/gsap';
 import Link from 'next/link';
-import { projectsData, categories } from '@/lib/projectsData';
 
 export default function ProjectsPage() {
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const containerRef = useRef(null);
   const cardsRef = useRef([]);
   const cursorRef = useRef(null);
   const cursorLabelRef = useRef(null);
 
-  // Filter projects
-  const filteredProjects = useMemo(() => {
-    return selectedCategory === 'all'
-      ? projectsData
-      : projectsData.filter((p) => p.category === selectedCategory);
-  }, [selectedCategory]);
-
-  // Entrance animation
   useEffect(() => {
-    if (!containerRef.current) return;
+    let cancelled = false;
+    async function fetchProjects() {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch('/api/projects');
+        if (!res.ok) throw new Error('Failed to fetch projects');
+        const data = await res.json();
+        if (!cancelled) setProjects(Array.isArray(data) ? data : []);
+      } catch (e) {
+        if (!cancelled) setError(e.message);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    fetchProjects();
+    return () => { cancelled = true; };
+  }, []);
+
+  const activeProjects = useMemo(() => projects.filter((p) => p.isActive !== false), [projects]);
+  const categories = useMemo(() => {
+    const cats = ['all', ...new Set(activeProjects.map((p) => p.category).filter(Boolean))];
+    return cats;
+  }, [activeProjects]);
+
+  const filteredProjects = useMemo(() => {
+    if (selectedCategory === 'all') return activeProjects;
+    return activeProjects.filter((p) => p.category === selectedCategory);
+  }, [selectedCategory, activeProjects]);
+
+  // Entrance animation (when projects are loaded)
+  useEffect(() => {
+    if (!containerRef.current || loading || filteredProjects.length === 0) return;
 
     const tl = gsap.timeline();
 
-    // Animate header
     tl.fromTo('.page-header',
       { y: 50, opacity: 0 },
       { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }
     );
 
-    // Animate cards with stagger
     tl.fromTo('.project-card',
       { y: 60, opacity: 0 },
       { y: 0, opacity: 1, stagger: 0.1, duration: 0.6, ease: 'power3.out' },
@@ -39,15 +63,16 @@ export default function ProjectsPage() {
     );
 
     return () => tl.kill();
-  }, []);
+  }, [loading, filteredProjects.length]);
 
   // Filter change animation
   useEffect(() => {
+    if (loading || filteredProjects.length === 0) return;
     gsap.fromTo('.project-card',
       { y: 30, opacity: 0 },
       { y: 0, opacity: 1, stagger: 0.05, duration: 0.4, ease: 'power2.out' }
     );
-  }, [selectedCategory]);
+  }, [selectedCategory, loading, filteredProjects.length]);
 
   // Custom Cursor Logic
   useEffect(() => {
@@ -108,7 +133,8 @@ export default function ProjectsPage() {
           </p>
         </div>
 
-        {/* Glassy Filter Bar (Sticky) */}
+        {/* Glassy Filter Bar (Sticky) — only when we have categories */}
+        {!loading && categories.length > 0 && (
         <div className="sticky top-24 z-30 mb-16 -mx-2">
           <div className="inline-flex flex-wrap gap-2 p-2 bg-white/30 backdrop-blur-md border border-white/40 rounded-full shadow-sm">
             {categories.map((cat) => (
@@ -126,10 +152,33 @@ export default function ProjectsPage() {
             ))}
           </div>
         </div>
+        )}
+
+        {/* Loading */}
+        {loading && (
+          <div className="text-center py-20">
+            <p className="text-xl text-stone-500">Loading projects…</p>
+          </div>
+        )}
+
+        {/* Error */}
+        {error && !loading && (
+          <div className="text-center py-20">
+            <p className="text-xl text-red-600">{error}</p>
+          </div>
+        )}
 
         {/* Project Grid Cards */}
+        {!loading && !error && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
-          {filteredProjects.map((project, index) => (
+          {filteredProjects.map((project, index) => {
+            const imageUrl = project.images?.[0];
+            const year = project.completedAt
+              ? new Date(project.completedAt).getFullYear()
+              : project.createdAt
+                ? new Date(project.createdAt).getFullYear()
+                : null;
+            return (
             <Link
               key={project.id}
               href={`/projects/${project.id}`}
@@ -138,22 +187,25 @@ export default function ProjectsPage() {
             >
               {/* Image Container */}
               <div className="relative aspect-[4/3] mb-6 rounded-xl overflow-hidden bg-stone-200 shadow-md transition-all duration-500 group-hover:shadow-xl group-hover:-translate-y-2">
-                <img
-                  src={project.images[0]}
-                  alt={project.name}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
+                {imageUrl ? (
+                  <img
+                    src={imageUrl}
+                    alt={project.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-stone-400 text-sm font-medium">No image</div>
+                )}
                 <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/10" />
                 
-                {/* Hover Overlay — Hammer + View */}
+                {/* Hover Overlay — View */}
                 <div className="absolute bottom-4 right-4 flex items-center gap-2 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 drop-shadow-lg">
-                 
                   <span className="text-white text-xs font-bold uppercase tracking-widest">View</span>
                 </div>
 
                 {/* Category Badge */}
                 <div className="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-bold uppercase tracking-wider text-stone-700">
-                  {project.categoryDisplay}
+                  {project.category || 'Project'}
                 </div>
               </div>
 
@@ -161,18 +213,22 @@ export default function ProjectsPage() {
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="text-2xl font-bold text-stone-900 mb-1 leading-tight group-hover:text-brand transition-colors">
-                    {project.name}
+                    {project.title}
                   </h3>
                   <p className="text-stone-500 text-sm">{project.location}</p>
                 </div>
-                <span className="text-stone-400 font-bold text-lg">{project.year}</span>
+                {year != null && (
+                  <span className="text-stone-400 font-bold text-lg">{year}</span>
+                )}
               </div>
             </Link>
-          ))}
+            );
+          })}
         </div>
+        )}
 
         {/* Empty State */}
-        {filteredProjects.length === 0 && (
+        {!loading && !error && filteredProjects.length === 0 && (
           <div className="text-center py-20">
             <p className="text-xl text-stone-500">No projects found in this category.</p>
           </div>

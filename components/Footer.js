@@ -10,38 +10,37 @@ export default function Footer() {
   const titleRef = useRef(null);
 
   useEffect(() => {
-    // 1. FOOTER PARALLAX CONTENT
-    // As we reveal the footer, the content inside moves slightly slower
-    // creating a rich 3D depth effect.
-    gsap.fromTo(containerRef.current, 
-      { yPercent: -50 }, // Start slightly higher
-      { 
-        yPercent: 0, 
+    if (!footerRef.current || !containerRef.current || !titleRef.current) return;
+
+    // 1. FOOTER PARALLAX — only the links/info block moves; CTA stays fixed so Email US is always visible
+    gsap.fromTo(containerRef.current,
+      { yPercent: -50 },
+      {
+        yPercent: 0,
         ease: "none",
         scrollTrigger: {
           trigger: footerRef.current,
-          start: "top bottom", // When top of footer hits bottom of viewport
+          start: "top bottom",
           end: "bottom bottom",
           scrub: true
-        } 
+        }
       }
     );
 
-    // 2. GIANT TEXT ANIMATION
-    // The letters space out slightly as they come into view
+    // 2. GIANT TEXT ANIMATION — letters space out as they come into view
     gsap.fromTo(titleRef.current,
-        { letterSpacing: "-0.1em", opacity: 0 },
-        { 
-            letterSpacing: "0em", 
-            opacity: 0.1, 
-            duration: 1,
-            scrollTrigger: {
-                trigger: footerRef.current,
-                start: "top 80%",
-                end: "bottom bottom",
-                scrub: 1.5
-            }
+      { letterSpacing: "-0.1em", opacity: 0 },
+      {
+        letterSpacing: "0em",
+        opacity: 0.1,
+        ease: "none",
+        scrollTrigger: {
+          trigger: footerRef.current,
+          start: "top 80%",
+          end: "bottom bottom",
+          scrub: 1.5
         }
+      }
     );
 
     return () => ScrollTrigger.getAll().forEach(t => t.kill());
@@ -75,10 +74,8 @@ export default function Footer() {
             <div className="absolute top-0 left-0 h-full w-[20%] bg-gradient-to-r from-transparent via-blue-400 to-transparent animate-scan" />
         </div>
 
-        {/* --- MAIN CONTENT CONTAINER --- */}
-        <div ref={containerRef} className="container mx-auto px-6 pt-20 pb-8 relative z-10 flex flex-col h-full justify-between">
-            
-            {/* Top Section: CTA */}
+        {/* --- CTA SECTION (outside parallax so Email US button is always visible) --- */}
+        <div className="container mx-auto px-6 pt-20 relative z-10 shrink-0">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-blue-500/20 pb-12">
                 <div>
                     <span className="text-blue-400 font-mono tracking-widest uppercase mb-4 block">Next Steps</span>
@@ -86,8 +83,6 @@ export default function Footer() {
                         Ready to build <br/> the future?
                     </h2>
                 </div>
-                
-                {/* GIANT CIRCULAR BUTTON */}
                 <a 
                     href="mailto:info@ppc-united.com"
                     className="group relative w-48 h-48 rounded-full border border-blue-500/30 flex items-center justify-center overflow-hidden hover:border-blue-400 transition-colors duration-500 mt-8 md:mt-0"
@@ -98,7 +93,10 @@ export default function Footer() {
                     </span>
                 </a>
             </div>
+        </div>
 
+        {/* --- PARALLAX CONTAINER (only this part moves; CTA stays fixed) --- */}
+        <div ref={containerRef} className="container mx-auto px-6 pb-8 relative z-10 flex flex-col flex-1 min-h-0">
             {/* Bottom Section: Links & Info */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-12 py-12">
                 {/* Column 1: Brand */}
