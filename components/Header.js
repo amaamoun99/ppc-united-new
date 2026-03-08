@@ -5,6 +5,7 @@ import { gsap } from '@/lib/gsap';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 const menuItems = [
   { label: 'Home', href: '/', image: '/images/menu-home.jpg' },
@@ -23,32 +24,49 @@ export default function Header() {
   const tlRef = useRef(null);
   
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [headerHidden, setHeaderHidden] = useState(false);
   const pathname = usePathname();
+  const { isMobile } = useMediaQuery();
 
-  // --- 1. SMART SCROLL LOGIC ---
+  const lastScrollRef = useRef(0);
+  const menuOpenRef = useRef(isMenuOpen);
+  menuOpenRef.current = isMenuOpen;
+
+  // Hide header on scroll down, show on scroll up. Use RAF + Lenis/window scroll so it works with smooth scroll.
   useEffect(() => {
-    let lastScroll = 0;
-    const header = headerRef.current;
-    
-    const updateHeader = () => {
-      const currentScroll = window.scrollY;
-      if (currentScroll < 50 || isMenuOpen) {
-        gsap.to(header, { y: 0, duration: 0.3 });
-        return;
-      }
-      if (currentScroll > lastScroll && currentScroll > 100) {
-        // Smooth slide down when scrolling down
-        gsap.to(header, { y: '-100%', duration: 0.4, ease: 'power3.inOut' });
-      } else if (currentScroll < lastScroll) {
-        // Smooth slide up when scrolling up
-        gsap.to(header, { y: '0%', duration: 0.4, ease: 'power3.inOut' });
-      }
-      lastScroll = currentScroll;
+    const SCROLL_THRESHOLD = 100;
+    const TOP_ZONE = 60;
+    const DIRECTION_THRESHOLD = 8;
+
+    const getScrollY = () => {
+      if (typeof window === 'undefined') return 0;
+      try {
+        if (window.lenis != null && typeof window.lenis.scroll === 'number') return window.lenis.scroll;
+      } catch (_) {}
+      return window.scrollY;
     };
 
-    window.addEventListener('scroll', updateHeader);
-    return () => window.removeEventListener('scroll', updateHeader);
-  }, [isMenuOpen]);
+    let rafId = null;
+    const tick = () => {
+      const scrollY = getScrollY();
+      const last = lastScrollRef.current;
+      const delta = scrollY - last;
+      lastScrollRef.current = scrollY;
+
+      if (scrollY <= TOP_ZONE || menuOpenRef.current) {
+        setHeaderHidden(false);
+      } else if (delta > DIRECTION_THRESHOLD && scrollY > SCROLL_THRESHOLD) {
+        setHeaderHidden(true);
+      } else if (delta < -DIRECTION_THRESHOLD) {
+        setHeaderHidden(false);
+      }
+      rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+    return () => {
+      if (rafId != null) cancelAnimationFrame(rafId);
+    };
+  }, []);
 
   // --- 2. MENU ANIMATION (FIXED) ---
   // Step A: Create the timeline ONCE on mount
@@ -91,31 +109,33 @@ export default function Header() {
     setIsMenuOpen(false);
   }, [pathname]);
 
-  // --- 3. HOVER IMAGE REVEAL LOGIC ---
+  // --- 3. HOVER IMAGE REVEAL LOGIC (desktop only; no hover on touch/mobile) ---
   const handleLinkHover = (imageSrc) => {
-     gsap.to(previewImageRef.current, {
-        opacity: 0,
-        duration: 0.2,
-        onComplete: () => {
-            if(previewImageRef.current) {
-                previewImageRef.current.style.backgroundImage = `url(${imageSrc})`;
-                gsap.to(previewImageRef.current, { opacity: 0.3, duration: 0.4 });
-            }
+    if (isMobile) return;
+    gsap.to(previewImageRef.current, {
+      opacity: 0,
+      duration: 0.2,
+      onComplete: () => {
+        if (previewImageRef.current) {
+          previewImageRef.current.style.backgroundImage = `url(${imageSrc})`;
+          gsap.to(previewImageRef.current, { opacity: 0.3, duration: 0.4 });
         }
-     });
+      }
+    });
   };
 
   const handleLinkLeave = () => {
-      gsap.to(previewImageRef.current, { opacity: 0, duration: 0.3 });
+    if (isMobile) return;
+    gsap.to(previewImageRef.current, { opacity: 0, duration: 0.3 });
   };
 
   return (
     <>
       <header
         ref={headerRef}
-        className={`fixed top-0 left-0 right-0 z-[60] transition-colors duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-[60] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           isMenuOpen ? 'bg-transparent' : 'bg-white/80 backdrop-blur-md border-b border-white/10'
-        }`}
+        } ${headerHidden ? '-translate-y-full' : 'translate-y-0'}`}
       >
         <div className="absolute inset-0 bg-noise opacity-5 pointer-events-none"></div>
         
@@ -162,7 +182,7 @@ export default function Header() {
         />
         <div className="absolute inset-0 bg-black/40" />
 
-        <div className="container mx-auto h-full px-12 pt-32 pb-12 flex flex-col md:flex-row justify-between relative z-10">
+        <div className="container mx-auto h-full px-6 md:px-12 pt-24 md:pt-32 pb-12 flex flex-col md:flex-row justify-between relative z-10">
             <div ref={menuContentRef} className="flex flex-col justify-center space-y-2">
                 {menuItems.map((item, index) => (
                     <div key={item.href} className="overflow-hidden">
@@ -170,7 +190,7 @@ export default function Header() {
                             href={item.href}
                             onMouseEnter={() => handleLinkHover(item.image)}
                             onMouseLeave={handleLinkLeave}
-                            className="menu-link-item block text-6xl md:text-8xl font-black text-transparent text-stroke-white hover:text-white transition-colors duration-300 tracking-tighter uppercase px-4"
+                            className="menu-link-item block text-4xl sm:text-6xl md:text-8xl font-black text-transparent text-stroke-white hover:text-white transition-colors duration-300 tracking-tighter uppercase px-2 md:px-4"
                             style={{ WebkitTextStroke: '1px rgba(255,255,255,0.3)' }}
                         >
                             {item.label}

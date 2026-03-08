@@ -106,19 +106,19 @@ export default function NewsDetailPage() {
       ref={containerRef}
       className="min-h-screen bg-gradient-to-b from-blue-800 via-blue-900 to-blue-950 text-white opacity-0 border-t border-blue-500/20"
     >
-      <nav className="fixed top-24 left-0 w-full z-50 px-6 md:px-12 flex justify-between items-start pointer-events-none">
+      <nav className="fixed top-24 left-0 w-full z-50 px-4 md:px-12 flex justify-between items-start pointer-events-none">
         <button
           onClick={handleBack}
-          className="pointer-events-auto bg-blue-900/80 backdrop-blur-md border border-blue-500/30 text-white px-6 py-3 rounded-full font-bold text-sm uppercase tracking-widest hover:bg-blue-500/20 hover:border-blue-400/50 transition-colors shadow-lg flex items-center gap-2 group"
+          className="pointer-events-auto bg-blue-900/80 backdrop-blur-md border border-blue-500/30 text-white px-5 py-3 min-h-[44px] rounded-full font-bold text-sm uppercase tracking-widest hover:bg-blue-500/20 hover:border-blue-400/50 transition-colors shadow-lg flex items-center gap-2 group"
         >
           <span>←</span> Back
         </button>
       </nav>
 
-      <article className="container mx-auto px-6 pt-24 pb-32 md:pt-32">
+      <article className="container mx-auto px-4 md:px-6 pt-20 md:pt-24 pb-24 md:pb-32">
         {/* Hero: cover image + title block */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 mb-16">
-          <div className="lg:col-span-8 relative aspect-[16/10] rounded-xl overflow-hidden bg-blue-900/50 border border-blue-500/20 min-h-[280px]">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-8 lg:gap-12 mb-12 md:mb-16">
+          <div className="lg:col-span-8 relative aspect-[16/10] rounded-lg md:rounded-xl overflow-hidden bg-blue-900/50 border border-blue-500/20 min-h-[220px] md:min-h-[280px]">
             {hasImages ? (
               <>
                 <Image
@@ -137,26 +137,26 @@ export default function NewsDetailPage() {
                 No image
               </div>
             )}
-            <div className="animate-in absolute bottom-6 left-6 md:bottom-8 md:left-8 right-8">
-              <div className="flex flex-wrap items-center gap-4 mb-4">
+            <div className="animate-in absolute bottom-4 left-4 md:bottom-8 md:left-8 right-4 md:right-8">
+              <div className="flex flex-wrap items-center gap-2 md:gap-4 mb-2 md:mb-4">
                 <span className="font-mono text-xs border border-blue-400/30 px-2 py-1 rounded text-blue-300">
                   News
                 </span>
                 <span className="font-mono text-xs text-blue-200/80">{dateStr}</span>
               </div>
-              <h1 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter leading-tight">
+              <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter leading-tight">
                 {article.title}
               </h1>
             </div>
           </div>
 
           {hasImages && images.length > 1 && (
-            <div className="lg:col-span-4 flex flex-row lg:flex-col gap-3">
+            <div className="lg:col-span-4 flex flex-row lg:flex-col gap-2 md:gap-3 min-h-[80px] lg:min-h-0">
               {images.map((img, index) => (
                 <button
                   key={index}
                   onClick={() => setActiveImageIndex(index)}
-                  className={`animate-in relative flex-1 min-h-[100px] lg:min-h-[120px] rounded-lg overflow-hidden transition-all duration-300 border ${
+                  className={`animate-in relative flex-1 lg:flex-none min-h-[72px] md:min-h-[100px] lg:min-h-[120px] rounded-lg overflow-hidden transition-all duration-300 border ${
                     activeImageIndex === index
                       ? 'ring-2 ring-blue-400 ring-offset-2 ring-offset-blue-950 opacity-100 border-blue-400/50'
                       : 'opacity-60 hover:opacity-100 border-blue-500/20'
@@ -177,8 +177,8 @@ export default function NewsDetailPage() {
 
         {/* Excerpt */}
         {article.excerpt && (
-          <div className="animate-in border-l-2 border-blue-500/50 pl-6 mb-12">
-            <p className="text-xl md:text-2xl text-blue-200/90 leading-relaxed font-medium">
+          <div className="animate-in border-l-2 border-blue-500/50 pl-4 md:pl-6 mb-8 md:mb-12">
+            <p className="text-lg md:text-xl lg:text-2xl text-blue-200/90 leading-relaxed font-medium">
               {article.excerpt}
             </p>
           </div>
@@ -187,18 +187,23 @@ export default function NewsDetailPage() {
         {/* Body */}
         <div className="animate-in max-w-3xl">
           <div
-            className="prose prose-invert prose-lg max-w-none text-blue-200/90 leading-relaxed prose-headings:text-white prose-headings:font-bold prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline prose-strong:text-white"
+            className="prose prose-invert prose-base md:prose-lg max-w-none text-blue-200/90 leading-relaxed prose-headings:text-white prose-headings:font-bold prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline prose-strong:text-white"
             dangerouslySetInnerHTML={{ __html: article.content }}
           />
         </div>
 
         {/* CTA */}
-        <div className="animate-in mt-16 pt-12 border-t border-blue-500/20">
-         
-          <span className="mx-4 text-blue-500/40">|</span>
+        <div className="animate-in mt-12 md:mt-16 pt-8 md:pt-12 border-t border-blue-500/20 flex flex-wrap items-center gap-2 md:gap-4">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-blue-300/80 font-medium text-sm md:text-base hover:text-blue-200 transition-colors"
+          >
+            Home
+          </Link>
+          <span className="text-blue-500/40 hidden md:inline">|</span>
           <Link
             href="/contact"
-            className="inline-flex items-center gap-3 text-blue-400 font-bold uppercase tracking-widest hover:text-blue-300 transition-colors group"
+            className="inline-flex items-center gap-2 md:gap-3 text-blue-400 font-bold uppercase tracking-widest hover:text-blue-300 transition-colors group min-h-[44px] items-center"
           >
             Get in touch
             <span className="text-xl group-hover:translate-x-1 transition-transform">→</span>

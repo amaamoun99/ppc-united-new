@@ -5,6 +5,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 // Register GSAP plugin safely
 if (typeof window !== 'undefined') {
@@ -14,14 +15,25 @@ if (typeof window !== 'undefined') {
 export default function AboutTeaser() {
   const containerRef = useRef(null);
   const buttonRef = useRef(null);
+  const { isTablet } = useMediaQuery();
 
   useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const elements = container.querySelectorAll('.reveal-text');
+    const line = container.querySelector('.divider-line');
+
+    // On small/medium screens: run reveal on mount so section is always visible (ScrollTrigger can fail or not fire)
+    if (isTablet) {
+      gsap.set(elements, { y: 0, opacity: 1, skewY: 0 });
+      if (line) gsap.set(line, { scaleX: 1, transformOrigin: 'left' });
+      return;
+    }
+
     const ctx = gsap.context(() => {
-      
-      // 1. Staggered Text Reveal
-      const elements = containerRef.current.querySelectorAll('.reveal-text');
-      
-      gsap.fromTo(elements, 
+      // 1. Staggered Text Reveal (desktop only)
+      gsap.fromTo(elements,
         { y: 100, opacity: 0, skewY: 5 },
         {
           y: 0,
@@ -31,31 +43,33 @@ export default function AboutTeaser() {
           stagger: 0.1,
           ease: 'power4.out',
           scrollTrigger: {
-            trigger: containerRef.current,
-            start: 'top 85%',
-          }
+            trigger: container,
+            start: 'top 90%',
+            end: 'top 30%',
+          },
         }
       );
 
-      // 2. Line Expansion Animation
-      gsap.fromTo('.divider-line',
-        { scaleX: 0, transformOrigin: 'left' },
-        {
-          scaleX: 1,
-          duration: 1.5,
-          ease: 'expo.out',
-          delay: 0.2,
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: 'top 85%',
+      // 2. Line Expansion Animation (desktop only)
+      if (line) {
+        gsap.fromTo(line,
+          { scaleX: 0, transformOrigin: 'left' },
+          {
+            scaleX: 1,
+            duration: 1.5,
+            ease: 'expo.out',
+            delay: 0.2,
+            scrollTrigger: {
+              trigger: container,
+              start: 'top 90%',
+            },
           }
-        }
-      );
-
-    }, containerRef);
+        );
+      }
+    }, container);
 
     return () => ctx.revert();
-  }, []);
+  }, [isTablet]);
 
   return (
     <section
@@ -68,12 +82,12 @@ export default function AboutTeaser() {
           {/* --- LEFT: BIG BOLD TYPOGRAPHY --- */}
           <div className="w-full lg:w-3/5 relative">
             <div className="overflow-hidden">
-                <h2 className="reveal-text text-6xl md:text-8xl font-black text-slate-900 tracking-tighter leading-[0.9]">
+                <h2 className="reveal-text text-4xl sm:text-6xl md:text-8xl font-black text-slate-900 tracking-tighter leading-[0.9]">
                   PRECISION
                 </h2>
             </div>
             <div className="overflow-hidden">
-                <h2 className="reveal-text text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-400 tracking-tighter leading-[0.9]">
+                <h2 className="reveal-text text-4xl sm:text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-400 tracking-tighter leading-[0.9]">
                   IN MOTION.
                 </h2>
             </div>

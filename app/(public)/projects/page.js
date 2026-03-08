@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { gsap } from '@/lib/gsap';
 import Link from 'next/link';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 export default function ProjectsPage() {
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -13,6 +14,7 @@ export default function ProjectsPage() {
   const cardsRef = useRef([]);
   const cursorRef = useRef(null);
   const cursorLabelRef = useRef(null);
+  const { isMobile } = useMediaQuery();
 
   useEffect(() => {
     let cancelled = false;
@@ -50,20 +52,17 @@ export default function ProjectsPage() {
     if (!containerRef.current || loading || filteredProjects.length === 0) return;
 
     const tl = gsap.timeline();
-
     tl.fromTo('.page-header',
-      { y: 50, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }
+      { y: isMobile ? 30 : 50, opacity: 0 },
+      { y: 0, opacity: 1, duration: isMobile ? 0.5 : 0.8, ease: 'power3.out' }
     );
-
     tl.fromTo('.project-card',
-      { y: 60, opacity: 0 },
-      { y: 0, opacity: 1, stagger: 0.1, duration: 0.6, ease: 'power3.out' },
-      '-=0.4'
+      { y: isMobile ? 40 : 60, opacity: 0 },
+      { y: 0, opacity: 1, stagger: 0.08, duration: isMobile ? 0.45 : 0.6, ease: 'power3.out' },
+      '-=0.3'
     );
-
     return () => tl.kill();
-  }, [loading, filteredProjects.length]);
+  }, [loading, filteredProjects.length, isMobile]);
 
   // Filter change animation
   useEffect(() => {
@@ -74,8 +73,9 @@ export default function ProjectsPage() {
     );
   }, [selectedCategory, loading, filteredProjects.length]);
 
-  // Custom Cursor Logic
+  // Custom Cursor — desktop only
   useEffect(() => {
+    if (isMobile) return;
     const cursor = cursorRef.current;
     const label = cursorLabelRef.current;
     if (!cursor || !label) return;
@@ -83,12 +83,10 @@ export default function ProjectsPage() {
     const moveCursor = (e) => {
       gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.6, ease: 'power3.out' });
     };
-
     const hoverCard = () => {
       gsap.to(cursor, { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(1.2)' });
       gsap.to(label, { opacity: 1, duration: 0.3 });
     };
-
     const leaveCard = () => {
       gsap.to(cursor, { scale: 0, opacity: 0, duration: 0.3 });
       gsap.to(label, { opacity: 0, duration: 0.3 });
@@ -99,7 +97,6 @@ export default function ProjectsPage() {
       card.addEventListener('mouseenter', hoverCard);
       card.addEventListener('mouseleave', leaveCard);
     });
-
     window.addEventListener('mousemove', moveCursor);
     return () => {
       window.removeEventListener('mousemove', moveCursor);
@@ -108,24 +105,26 @@ export default function ProjectsPage() {
         card.removeEventListener('mouseleave', leaveCard);
       });
     };
-  }, [filteredProjects.length]);
+  }, [filteredProjects.length, isMobile]);
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-stone-50 relative overflow-hidden cursor-none">
+    <div ref={containerRef} className={`min-h-screen bg-stone-50 relative overflow-hidden ${isMobile ? '' : 'cursor-none'}`}>
       
-      {/* Custom Cursor — Circle + View */}
-      <div 
-        ref={cursorRef} 
-        className="fixed top-0 left-0 w-24 h-24 bg-blue-900/90 backdrop-blur-sm rounded-full pointer-events-none z-50 flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 scale-0 opacity-0 shadow-2xl"
-      >
-        <span ref={cursorLabelRef} className="text-white text-xs font-bold uppercase tracking-widest opacity-0">View</span>
-      </div>
+      {/* Custom Cursor — desktop only */}
+      {!isMobile && (
+        <div
+          ref={cursorRef}
+          className="fixed top-0 left-0 w-24 h-24 bg-blue-900/90 backdrop-blur-sm rounded-full pointer-events-none z-50 flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 scale-0 opacity-0 shadow-2xl"
+        >
+          <span ref={cursorLabelRef} className="text-white text-xs font-bold uppercase tracking-widest opacity-0">View</span>
+        </div>
+      )}
 
-      <div className="container mx-auto px-6 pt-32 pb-24">
+      <div className="container mx-auto px-4 md:px-6 pt-24 md:pt-32 pb-16 md:pb-24">
         
         {/* Page Header */}
-        <div className="page-header mb-16">
-          <h1 className="text-6xl md:text-8xl font-black text-stone-900 tracking-tighter mb-4">
+        <div className="page-header mb-12 md:mb-16">
+          <h1 className="text-4xl sm:text-6xl md:text-8xl font-black text-stone-900 tracking-tighter mb-4">
             OUR <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand to-brand-dark">WORK</span>
           </h1>
           <p className="text-xl text-stone-500 max-w-2xl">
@@ -135,13 +134,13 @@ export default function ProjectsPage() {
 
         {/* Glassy Filter Bar (Sticky) — only when we have categories */}
         {!loading && categories.length > 0 && (
-        <div className="sticky top-24 z-30 mb-16 -mx-2">
+        <div className="sticky top-24 z-30 mb-12 md:mb-16 -mx-2">
           <div className="inline-flex flex-wrap gap-2 p-2 bg-white/30 backdrop-blur-md border border-white/40 rounded-full shadow-sm">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-6 py-2 rounded-full text-sm font-bold uppercase tracking-widest transition-all duration-300 ${
+                className={`px-4 py-3 md:px-6 md:py-2 rounded-full text-xs md:text-sm font-bold uppercase tracking-widest transition-all duration-300 min-h-[44px] md:min-h-0 ${
                   selectedCategory === cat
                     ? 'bg-stone-900 text-white shadow-md'
                     : 'text-stone-600 hover:bg-white/50'
@@ -183,23 +182,23 @@ export default function ProjectsPage() {
               key={project.id}
               href={`/projects/${project.id}`}
               ref={(el) => (cardsRef.current[index] = el)}
-              className="project-card group cursor-none perspective-1000 block"
+              className={`project-card group perspective-1000 block ${isMobile ? 'cursor-pointer' : 'cursor-none'}`}
             >
-              {/* Image Container */}
-              <div className="relative aspect-[4/3] mb-6 rounded-xl overflow-hidden bg-stone-200 shadow-md transition-all duration-500 group-hover:shadow-xl group-hover:-translate-y-2">
+              {/* Image Container — no hover lift/scale on mobile */}
+              <div className="relative aspect-[4/3] mb-6 rounded-xl overflow-hidden bg-stone-200 shadow-md transition-all duration-500 md:group-hover:shadow-xl md:group-hover:-translate-y-2">
                 {imageUrl ? (
                   <img
                     src={imageUrl}
                     alt={project.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    className="w-full h-full object-cover transition-transform duration-700 md:group-hover:scale-110"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-stone-400 text-sm font-medium">No image</div>
                 )}
-                <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/10" />
+                <div className="absolute inset-0 bg-black/0 transition-colors duration-300 md:group-hover:bg-black/10" />
                 
-                {/* Hover Overlay — View */}
-                <div className="absolute bottom-4 right-4 flex items-center gap-2 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 drop-shadow-lg">
+                {/* Hover Overlay — View (desktop) */}
+                <div className="absolute bottom-4 right-4 flex items-center gap-2 opacity-0 translate-y-4 md:group-hover:opacity-100 md:group-hover:translate-y-0 transition-all duration-300 drop-shadow-lg">
                   <span className="text-white text-xs font-bold uppercase tracking-widest">View</span>
                 </div>
 
@@ -210,9 +209,9 @@ export default function ProjectsPage() {
               </div>
 
               {/* Text Content */}
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="text-2xl font-bold text-stone-900 mb-1 leading-tight group-hover:text-brand transition-colors">
+              <div className="flex justify-between items-start gap-4">
+                <div className="min-w-0">
+                  <h3 className="text-xl md:text-2xl font-bold text-stone-900 mb-1 leading-tight md:group-hover:text-brand transition-colors">
                     {project.title}
                   </h3>
                   <p className="text-stone-500 text-sm">{project.location}</p>

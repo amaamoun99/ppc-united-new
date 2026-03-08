@@ -117,19 +117,19 @@ export default function ProjectDetailsPage() {
 
   return (
     <div ref={containerRef} className="min-h-screen bg-stone-50 opacity-0">
-      <nav className="fixed top-24 left-0 w-full z-50 px-6 md:px-12 flex justify-between items-start pointer-events-none">
+      <nav className="fixed top-24 left-0 w-full z-50 px-4 md:px-12 flex justify-between items-start pointer-events-none">
         <button
           onClick={handleBack}
-          className="pointer-events-auto bg-white/80 backdrop-blur-md border border-white/20 text-stone-900 px-6 py-3 rounded-full font-bold text-sm uppercase tracking-widest hover:bg-stone-900 hover:text-white transition-colors shadow-lg flex items-center gap-2 group"
+          className="pointer-events-auto bg-white/80 backdrop-blur-md border border-white/20 text-stone-900 px-5 py-3 min-h-[44px] rounded-full font-bold text-sm uppercase tracking-widest hover:bg-stone-900 hover:text-white transition-colors shadow-lg flex items-center gap-2 group"
         >
           <span>←</span> Back
         </button>
       </nav>
 
-      <div className="container mx-auto px-6 py-24 md:py-32">
+      <div className="container mx-auto px-4 md:px-6 py-20 md:py-32">
         {/* GALLERY: main image + thumbnails */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-20 h-[60vh] lg:h-[700px]">
-          <div className="lg:col-span-9 relative rounded-2xl overflow-hidden bg-stone-200 shadow-2xl group min-h-[300px]">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 mb-12 md:mb-20 min-h-[50vh] lg:min-h-[700px]">
+          <div className="lg:col-span-9 relative rounded-xl md:rounded-2xl overflow-hidden bg-stone-200 shadow-2xl group min-h-[280px] md:min-h-[400px]">
             {hasImages ? (
               <>
                 <Image
@@ -148,23 +148,23 @@ export default function ProjectDetailsPage() {
                 No image
               </div>
             )}
-            <div className="animate-in absolute bottom-8 left-8 md:bottom-12 md:left-12 text-white p-4">
-              <span className="inline-block px-3 py-1 border border-white/30 rounded-full bg-black/20 backdrop-blur-md text-xs font-mono uppercase tracking-widest mb-4">
+            <div className="animate-in absolute bottom-4 left-4 md:bottom-12 md:left-12 text-white p-3 md:p-4">
+              <span className="inline-block px-3 py-1 border border-white/30 rounded-full bg-black/20 backdrop-blur-md text-xs font-mono uppercase tracking-widest mb-2 md:mb-4">
                 {categoryDisplay}
               </span>
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-none">
+              <h1 className="text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-none">
                 {project.title}
               </h1>
             </div>
           </div>
 
           {hasImages && images.length > 1 && (
-            <div className="lg:col-span-3 flex flex-row lg:flex-col gap-4 h-full">
+            <div className="lg:col-span-3 flex flex-row lg:flex-col gap-2 md:gap-4 lg:h-full min-h-[72px] lg:min-h-0">
               {images.map((img, index) => (
                 <button
                   key={index}
                   onClick={() => changeActiveImage(index)}
-                  className={`animate-in relative flex-1 rounded-xl overflow-hidden transition-all duration-300 group min-h-[80px] ${
+                  className={`animate-in relative flex-1 lg:flex-none rounded-lg md:rounded-xl overflow-hidden transition-all duration-300 group min-h-[72px] md:min-h-[80px] ${
                     activeImageIndex === index
                       ? 'ring-2 ring-stone-900 ring-offset-2 opacity-100'
                       : 'opacity-60 hover:opacity-100'
@@ -184,8 +184,8 @@ export default function ProjectDetailsPage() {
         </div>
 
         {/* DETAILS */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-24">
-          <div className="animate-in md:col-span-4 space-y-8 border-t border-stone-200 pt-8">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-24">
+          <div className="animate-in md:col-span-4 space-y-6 md:space-y-8 border-t border-stone-200 pt-6 md:pt-8">
             <h3 className="text-sm font-mono uppercase tracking-widest text-stone-400">Project Specs</h3>
             <div className="grid grid-cols-1 gap-6">
               <div>
@@ -203,9 +203,9 @@ export default function ProjectDetailsPage() {
             </div>
           </div>
 
-          <div className="animate-in md:col-span-8 border-t border-stone-200 pt-8">
-            <h3 className="text-sm font-mono uppercase tracking-widest text-stone-400 mb-6">The Concept</h3>
-            <p className="text-2xl md:text-3xl font-serif italic text-stone-800 leading-relaxed mb-8">
+          <div className="animate-in md:col-span-8 border-t border-stone-200 pt-6 md:pt-8">
+            <h3 className="text-sm font-mono uppercase tracking-widest text-stone-400 mb-4 md:mb-6">The Concept</h3>
+            <p className="text-xl md:text-2xl lg:text-3xl font-serif italic text-stone-800 leading-relaxed mb-6 md:mb-8">
               &quot;{project.description}&quot;
             </p>
             <div className="text-lg text-stone-600 space-y-6 leading-relaxed">

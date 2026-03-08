@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { gsap, ScrollTrigger } from '@/lib/gsap';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 const milestones = [
   {
@@ -34,12 +35,15 @@ export default function HorizontalTimeline() {
   const triggerRef = useRef(null);
   const trackRef = useRef(null);
   const containerRef = useRef(null);
+  const { isMobile } = useMediaQuery();
 
   useEffect(() => {
+    if (isMobile) return; // Vertical layout on mobile; no horizontal scroll
+
     const ctx = gsap.context(() => {
       const trigger = triggerRef.current;
       const track = trackRef.current;
-      
+
       if (!trigger || !track) return;
 
       const getScrollAmount = () => {
@@ -48,8 +52,7 @@ export default function HorizontalTimeline() {
         return trackWidth - windowWidth;
       };
 
-      // Horizontal scroll tween - similar to Services component structure
-      const scrollTween = gsap.to(track, {
+      gsap.to(track, {
         x: () => -getScrollAmount(),
         ease: "none",
         scrollTrigger: {
@@ -63,26 +66,44 @@ export default function HorizontalTimeline() {
           anticipatePin: 1,
         }
       });
-
     }, triggerRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [isMobile]);
 
   return (
-    <section 
-      ref={triggerRef} 
+    <section
+      ref={triggerRef}
       className="relative overflow-hidden z-20 bg-gradient-to-b from-white via-blue-700 to-blue-800"
     >
-      {/* Main Container - similar structure to Services */}
-      <div ref={containerRef} className="h-screen flex items-center relative overflow-hidden">
+      {/* Mobile: Vertical timeline list */}
+      <div className="md:hidden py-16 px-6 space-y-12">
+        <div className="text-white max-w-md">
+          <h2 className="text-4xl font-bold leading-tight">
+            A Decade of <br /> <span className="text-blue-400">Excellence.</span>
+          </h2>
+          <p className="text-[rgba(219,239,255,0.8)] mt-4 text-lg">
+            From humble beginnings to kingdom-wide infrastructure.
+          </p>
+        </div>
+        {milestones.map((milestone) => (
+          <div key={milestone.id} className="text-white border-l-2 border-white/20 pl-6 py-2">
+            <span className="text-4xl font-black text-blue-400 block mb-2">{milestone.year}</span>
+            <h3 className="text-xl font-bold mb-2">{milestone.title}</h3>
+            <p className="text-blue-200/80 leading-relaxed">{milestone.description}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop: Main Container - horizontal scroll */}
+      <div ref={containerRef} className="hidden md:flex h-screen items-center relative overflow-hidden">
         
         {/* Background Label */}
         <div className="absolute top-12 left-6 md:left-12 text-blue-300/60 font-mono text-sm uppercase tracking-widest z-10 pointer-events-none">
           Our History
         </div>
         
-        {/* The Track that scrolls horizontally */}
+        {/* The Track that scrolls horizontally (desktop only) */}
         <div ref={trackRef} className="flex gap-12 md:gap-24 px-6 md:px-24 items-center min-w-max">
           
           {/* Intro Card */}

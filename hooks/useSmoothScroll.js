@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
 import { useLenis } from '@/lib/lenis';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 export function useSmoothScroll() {
-  useLenis();
+  const { isMobile } = useMediaQuery();
+  useLenis({ enabled: !isMobile });
 }
 

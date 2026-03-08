@@ -64,7 +64,7 @@ export default function GetInTouch() {
 
     // B. Shrink container back to Button size
     tl.to(containerRef.current, {
-        clipPath: "inset(45% 30% 45% 30%)", // Matches the initial button size roughly
+        clipPath: "inset(42% 15% 42% 15%)", // Wide enough for full "Let's work Together" text
         duration: 0.7,
         ease: "expo.inOut"
     });
@@ -80,11 +80,9 @@ export default function GetInTouch() {
 
   // 3. INITIAL SETUP
   useEffect(() => {
-    // Set initial state of the container (It should look like the button initially)
-    // We use clip-path to hide the form parts and make the container look like a small box
-    // Adjust these % values to match the button size perfectly
+    // Initial clip: wide enough so full "Let's work Together" has blue bg (inset top right bottom left)
     gsap.set(containerRef.current, { 
-        clipPath: "inset(45% 30% 45% 30%)" 
+        clipPath: "inset(42% 15% 42% 15%)" 
     });
   }, []);
 
@@ -101,7 +99,7 @@ export default function GetInTouch() {
         ref={ctaTextRef} 
         className="relative z-10 text-center flex flex-col items-center pointer-events-none" // pointer-events-none so clicks go through to the container behind
       >
-        <h2 className="text-6xl md:text-8xl font-black text-white mb-8 tracking-tighter mix-blend-difference">
+        <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-black text-white mb-8 tracking-tighter mix-blend-difference px-4">
             HAVE AN IDEA?
         </h2>
         {/* Visual-only button label (The actual click happens on the container below) */}
@@ -120,10 +118,10 @@ export default function GetInTouch() {
             ${!isOpen ? 'cursor-pointer hover:bg-brand-light' : 'bg-stone-100 cursor-default'}
         `}
       >
-        {/* THE TRIGGER TEXT (Visible when closed) */}
+        {/* THE TRIGGER TEXT (Visible when closed) — wrapped so it stays within visible clip */}
         {!isOpen && (
-            <span className="text-white font-bold text-xl tracking-widest uppercase absolute z-30 pointer-events-none ">
-                Lets work Together
+            <span className="text-white font-bold text-lg sm:text-xl tracking-widest uppercase absolute z-30 pointer-events-none whitespace-nowrap px-6">
+                Let&apos;s work Together
             </span>
         )}
 

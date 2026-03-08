@@ -1,65 +1,49 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { gsap, ScrollTrigger } from '@/lib/gsap';
+import { gsap } from '@/lib/gsap';
 import Link from 'next/link';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 export default function MediaNews({ onContentReady }) {
   const sectionRef = useRef(null);
   const marqueeInnerRef = useRef(null);
   const rafIdRef = useRef(null);
   const [newsItems, setNewsItems] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const carouselRef = useRef(null);
+  const autoRotateRef = useRef(null);
+  const { isMobile, isTablet } = useMediaQuery();
+
+  // Cards per view: mobile 1, tablet 2, desktop 3
+  const cardsPerView = isMobile ? 1 : (isTablet ? 2 : 3);
+  const totalSlides = Math.max(1, newsItems.length - cardsPerView + 1);
   
   useEffect(() => {
     const ctx = gsap.context(() => {
       const section = sectionRef.current;
       if (!section) return;
       
-      // 2. MARQUEE SCROLL VELOCITY EFFECT
-      // The marquee moves by itself, but moves FASTER when user scrolls
       let xPercent = 0;
       let direction = -1;
       
       const animateMarquee = () => {
-          if (!marqueeInnerRef.current) return;
-          
-          if (xPercent <= -100) xPercent = 0;
-          if (xPercent > 0) xPercent = -100;
-          
-          gsap.set(marqueeInnerRef.current, { xPercent: xPercent });
-          
-          // Base speed
-          xPercent += 0.05 * direction; 
-          rafIdRef.current = requestAnimationFrame(animateMarquee);
+        if (!marqueeInnerRef.current) return;
+        if (xPercent <= -100) xPercent = 0;
+        if (xPercent > 0) xPercent = -100;
+        gsap.set(marqueeInnerRef.current, { xPercent: xPercent });
+        xPercent += 0.05 * direction; 
+        rafIdRef.current = requestAnimationFrame(animateMarquee);
       };
       
-      // Add scroll velocity to the marquee speed
-      gsap.to(marqueeInnerRef.current, {
-          scrollTrigger: {
-              trigger: section,
-              start: "top bottom",
-              end: "bottom top",
-              onUpdate: (self) => {
-                  // Determine direction based on scroll
-                  direction = self.direction === 1 ? -1 : 1;
-                  // Add velocity (making it surge when scrolling)
-                  xPercent += self.getVelocity() * 0.0005 * direction;
-              }
-          }
-      });
-      
       rafIdRef.current = requestAnimationFrame(animateMarquee);
-
     }, sectionRef);
 
-    // Cleanup function
     return () => {
-      // Cancel animation frame if it exists
       if (rafIdRef.current) {
         cancelAnimationFrame(rafIdRef.current);
         rafIdRef.current = null;
       }
-      // Only revert the context (which will clean up its own ScrollTriggers)
       ctx.revert();
     };
   }, []);
@@ -91,13 +75,52 @@ export default function MediaNews({ onContentReady }) {
     fetchNews();
   }, []);
 
-  // Notify parent when dynamic content has loaded so ScrollTrigger can refresh (fixes layout after images load)
+  // Notify parent when dynamic content has loaded
   useEffect(() => {
     if (typeof onContentReady !== 'function') return;
     const t1 = setTimeout(() => onContentReady(), 0);
     const t2 = setTimeout(() => onContentReady(), 450);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [newsItems.length, onContentReady]);
+
+  // Clamp currentIndex when screen size or data changes
+  useEffect(() => {
+    setCurrentIndex((prev) => Math.min(prev, totalSlides - 1));
+  }, [totalSlides, cardsPerView]);
+
+  // Auto-rotate carousel (advance by 1 card)
+  useEffect(() => {
+    if (newsItems.length <= 1 || totalSlides <= 1) return;
+
+    autoRotateRef.current = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % totalSlides);
+    }, 5000);
+
+    return () => {
+      if (autoRotateRef.current) clearInterval(autoRotateRef.current);
+    };
+  }, [newsItems.length, totalSlides]);
+
+  // Animate carousel transition
+  useEffect(() => {
+    if (!carouselRef.current || newsItems.length === 0) return;
+    const percentPerCard = 100 / newsItems.length;
+    gsap.to(carouselRef.current, {
+      x: `-${currentIndex * percentPerCard}%`,
+      duration: 0.8,
+      ease: 'power3.inOut'
+    });
+  }, [currentIndex, newsItems.length]);
+
+  const goToNext = () => {
+    if (autoRotateRef.current) clearInterval(autoRotateRef.current);
+    setCurrentIndex((prev) => (prev + 1) % totalSlides);
+  };
+
+  const goToPrev = () => {
+    if (autoRotateRef.current) clearInterval(autoRotateRef.current);
+    setCurrentIndex((prev) => (prev - 1 + totalSlides) % totalSlides);
+  };
 
   return (
     <section 
@@ -109,7 +132,7 @@ export default function MediaNews({ onContentReady }) {
         
         {/* Header Layout */}
         <div className="flex flex-col md:flex-row justify-between items-baseline mb-20 border-b border-blue-500/20 pb-8">
-            <h2 className="text-7xl font-black tracking-tighter text-white">
+            <h2 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tighter text-white">
                 NEWS<span className="text-blue-400">.</span>
             </h2>
             <div className="flex items-center gap-4 text-blue-300/70 text-sm font-mono uppercase tracking-widest mt-6 md:mt-0">
@@ -118,17 +141,66 @@ export default function MediaNews({ onContentReady }) {
             </div>
         </div>
 
-        {/* --- DYNAMIC NEWS GRID --- */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-8 gap-y-12">
-            {newsItems.map((item, index) => (
-                <SpotlightCard key={item.id} item={item} index={index} />
-            ))}
-            {newsItems.length === 0 && (
-              <p className="col-span-full text-blue-200/70 text-sm">
-                No featured news yet. Check back soon.
-              </p>
+        {/* --- CAROUSEL (responsive: 1 / 2 / 3 cards per view) --- */}
+        {newsItems.length > 0 ? (
+          <div className="relative">
+            <div className="overflow-hidden">
+              <div
+                ref={carouselRef}
+                className="flex"
+                style={{ width: `${(newsItems.length * 100) / cardsPerView}%` }}
+              >
+                {newsItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex-shrink-0 px-4 md:px-6 lg:px-4"
+                    style={{ width: `${100 / newsItems.length}%` }}
+                  >
+                    <SpotlightCard item={item} />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Navigation Arrows */}
+            {totalSlides > 1 && (
+              <>
+                <button
+                  onClick={goToPrev}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12 w-12 h-12 rounded-full bg-blue-900/80 backdrop-blur-sm border border-blue-500/30 flex items-center justify-center hover:bg-blue-500/20 hover:border-blue-400/50 transition-all shadow-lg z-10 text-white"
+                  aria-label="Previous"
+                >
+                  ←
+                </button>
+                <button
+                  onClick={goToNext}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12 w-12 h-12 rounded-full bg-blue-900/80 backdrop-blur-sm border border-blue-500/30 flex items-center justify-center hover:bg-blue-500/20 hover:border-blue-400/50 transition-all shadow-lg z-10 text-white"
+                  aria-label="Next"
+                >
+                  →
+                </button>
+              </>
             )}
-        </div>
+
+            {/* Dots Indicator (one per slide) */}
+            {totalSlides > 1 && (
+              <div className="flex justify-center gap-2 mt-8">
+                {Array.from({ length: totalSlides }).map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentIndex(idx)}
+                    className={`w-2 h-2 rounded-full transition-all ${currentIndex === idx ? 'bg-blue-400 w-8' : 'bg-blue-400/30'}`}
+                    aria-label={`Go to slide ${idx + 1}`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <p className="text-blue-200/70 text-sm text-center">
+            No featured news yet. Check back soon.
+          </p>
+        )}
 
       </div>
 
@@ -149,11 +221,11 @@ export default function MediaNews({ onContentReady }) {
 }
 
 // --- SUB-COMPONENT: SPOTLIGHT CARD ---
-function SpotlightCard({ item, index }) {
+function SpotlightCard({ item }) {
     const cardRef = useRef(null);
 
-    // Mouse tracking for Spotlight effect
     const handleMouseMove = (e) => {
+        if (!cardRef.current) return;
         const { left, top } = cardRef.current.getBoundingClientRect();
         const x = e.clientX - left;
         const y = e.clientY - top;
@@ -166,7 +238,7 @@ function SpotlightCard({ item, index }) {
         <article 
             ref={cardRef}
             onMouseMove={handleMouseMove}
-            className="group relative bg-blue-900/30 rounded-none border border-blue-500/20 overflow-hidden transition-colors hover:bg-blue-900/50"
+            className="group relative bg-blue-900/30 rounded-lg border border-blue-500/20 overflow-hidden transition-all hover:bg-blue-900/50 hover:-translate-y-2 duration-500 h-full"
         >
             {/* The Spotlight Gradient Overlay with Blue */}
             <div 

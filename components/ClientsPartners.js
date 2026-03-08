@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { gsap } from 'gsap'; 
+import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Image from 'next/image';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
-// Register GSAP plugin safely
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
@@ -41,29 +41,51 @@ const allClients = [
 export default function ClientsPartners() {
   const containerRef = useRef(null);
   const velocityBarRef = useRef(null);
-  
+  const { isMobile } = useMediaQuery();
+
   // 2. INITIAL ANIMATION (Floating & Entrance)
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Animate the initial featured bubbles
-      gsap.fromTo(
-        '.featured-bubble',
-        { scale: 0, opacity: 0, y: 50 },
-        {
-          scale: 1,
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          stagger: 0.1,
-          ease: 'back.out(1.5)',
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: 'top 75%',
-          },
-        }
-      );
+      const bubbles = containerRef.current?.querySelectorAll('.featured-bubble');
+      if (!bubbles?.length) return;
 
-      // Continuous floating motion for ALL bubbles
+      // On mobile: animate in immediately on mount so clients always appear (ScrollTrigger can fail on refresh)
+      if (isMobile) {
+        gsap.fromTo(
+          '.featured-bubble',
+          { scale: 0, opacity: 0, y: 30 },
+          {
+            scale: 1,
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            stagger: 0.06,
+            ease: 'back.out(1.4)',
+            delay: 0.1,
+          }
+        );
+      } else {
+        // Desktop: scroll-triggered entrance
+        gsap.fromTo(
+          '.featured-bubble',
+          { scale: 0, opacity: 0, y: 50 },
+          {
+            scale: 1,
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            stagger: 0.1,
+            ease: 'back.out(1.5)',
+            scrollTrigger: {
+              trigger: containerRef.current,
+              start: 'top 75%',
+            },
+          }
+        );
+      }
+
+      // Continuous floating motion (run after bubbles are visible)
+      const delay = isMobile ? 800 : 1200;
       gsap.to('.client-bubble-inner', {
         y: -10,
         rotation: 2,
@@ -71,15 +93,13 @@ export default function ClientsPartners() {
         ease: 'sine.inOut',
         repeat: -1,
         yoyo: true,
-        stagger: {
-          amount: 2,
-          from: 'random',
-        },
+        stagger: { amount: 2, from: 'random' },
+        delay,
       });
     }, containerRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [isMobile]);
 
   // 3. VELOCITY BAR ANIMATION
   useEffect(() => {
@@ -113,14 +133,14 @@ export default function ClientsPartners() {
       <div className="container mx-auto max-w-7xl relative z-10 text-center">
         {/* Header Section */}
         <div className="mb-16 space-y-4">
-          <h2 className=" text-white text-6xl md:text-8xl font-black  tracking-tighter mb-4">
+          <h2 className="text-white text-4xl sm:text-6xl md:text-8xl font-black tracking-tighter mb-4">
             Partners & <span className="text-blue-600">Clients</span>
           </h2>
          
         </div>
 
         {/* BUBBLE GRID CONTAINER */}
-        <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 md:gap-6 justify-items-center perspective-1000 ">
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 md:gap-6 justify-items-center perspective-1000">
           
           {/* 1. Featured Clients (Always Visible) */}
           {featuredClients.map((client, index) => (

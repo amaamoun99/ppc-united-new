@@ -3,45 +3,54 @@
 import { useEffect, useRef } from 'react';
 import { gsap, ScrollTrigger } from '@/lib/gsap';
 import Image from 'next/image';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 export default function Hero() {
   const containerRef = useRef(null);
   const videoRef = useRef(null);
   const textRef = useRef(null);
   const cursorRef = useRef(null);
+  const { isMobile } = useMediaQuery();
 
   useEffect(() => {
+    if (!containerRef.current || !textRef.current) return;
+
     const tl = gsap.timeline();
 
-    // 1. INTRO ANIMATION
-    tl.fromTo(containerRef.current, 
-      { clipPath: "circle(0% at 50% 50%)" },
-      { 
-        clipPath: "circle(150% at 50% 50%)", 
-        duration: 2.5, 
-        ease: "power4.inOut",
-        delay: 0.2
-      }
-    );
+    // 1. INTRO ANIMATION — simpler on mobile (faster, no clip-path if preferred) or keep same
+    if (isMobile) {
+      tl.fromTo(containerRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.8, ease: 'power2.out' }
+      );
+    } else {
+      tl.fromTo(containerRef.current,
+        { clipPath: "circle(0% at 50% 50%)" },
+        {
+          clipPath: "circle(150% at 50% 50%)",
+          duration: 2.5,
+          ease: "power4.inOut",
+          delay: 0.2
+        }
+      );
+    }
 
     // 2. TEXT REVEAL
     const textLines = textRef.current.querySelectorAll('.hero-text-line');
-    tl.fromTo(textLines, 
-      { y: 150, skewY: 10 },
-      { y: 0, skewY: 0, duration: 1.2, stagger: 0.1, ease: "power3.out" },
-      "-=1.5"
+    tl.fromTo(textLines,
+      { y: isMobile ? 40 : 150, skewY: isMobile ? 0 : 10 },
+      { y: 0, skewY: 0, duration: isMobile ? 0.6 : 1.2, stagger: 0.08, ease: "power3.out" },
+      isMobile ? "-=0.4" : "-=1.5"
     );
 
-    // 3. X-RAY CURSOR LOGIC
+    // 3. X-RAY CURSOR — desktop only; no hover on touch/mobile
     const handleMouseMove = (e) => {
-      if (!cursorRef.current) return;
-      
+      if (isMobile || !cursorRef.current) return;
       const { clientX, clientY } = e;
-      
       gsap.to(cursorRef.current, {
-        css: { 
-            WebkitMaskPosition: `${clientX - 150}px ${clientY - 150}px`,
-            maskPosition: `${clientX - 150}px ${clientY - 150}px`
+        css: {
+          WebkitMaskPosition: `${clientX - 150}px ${clientY - 150}px`,
+          maskPosition: `${clientX - 150}px ${clientY - 150}px`
         },
         duration: 0.2,
         ease: "power1.out"
@@ -50,23 +59,25 @@ export default function Hero() {
 
     window.addEventListener('mousemove', handleMouseMove);
 
-    // 4. PARALLAX SCROLL
-    gsap.to(videoRef.current, {
+    // 4. PARALLAX SCROLL — desktop only
+    if (!isMobile && videoRef.current) {
+      gsap.to(videoRef.current, {
         yPercent: 30,
         ease: "none",
         scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top top",
-            end: "bottom top",
-            scrub: true
+          trigger: containerRef.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: true
         }
-    });
+      });
+    }
 
     return () => {
-        window.removeEventListener('mousemove', handleMouseMove);
-        ScrollTrigger.getAll().forEach(t => t.kill());
+      window.removeEventListener('mousemove', handleMouseMove);
+      ScrollTrigger.getAll().forEach(t => t.kill());
     };
-  }, []);
+  }, [isMobile]);
 
   return (
     <section 
@@ -100,16 +111,16 @@ export default function Hero() {
         </video>
       </div>
 
-      {/* --- LAYER 2: COLOR VIDEO (Revealed by Mouse) --- */}
+      {/* --- LAYER 2: COLOR VIDEO (Revealed by Mouse on desktop; hidden on mobile) --- */}
       <div 
         ref={cursorRef}
-        className="absolute inset-0 z-10 pointer-events-none"
+        className="absolute inset-0 z-10 pointer-events-none md:block hidden"
         style={{
             WebkitMaskImage: "radial-gradient(circle 150px at center, black 40%, transparent 100%)",
             maskImage: "radial-gradient(circle 150px at center, black 40%, transparent 100%)",
             WebkitMaskRepeat: "no-repeat",
             maskRepeat: "no-repeat",
-            WebkitMaskPosition: "50% 50%", 
+            WebkitMaskPosition: "50% 50%",
             maskPosition: "50% 50%"
         }}
       >
@@ -135,16 +146,16 @@ export default function Hero() {
         className="relative z-30 h-full flex flex-col items-center justify-center text-center px-4 pointer-events-none"
       >
         {/* --- GLASSY GLOW CARD WRAPPER --- */}
-        <div className="relative bg--950/60 backdrop-blur-md border border-blue-500/20 p-10 md:p-16 rounded-3xl shadow-2xl shadow-blue-900/50 overflow-hidden">
+        <div className="relative bg--950/60 backdrop-blur-md border border-blue-500/20 p-6 md:p-10 lg:p-16 rounded-2xl md:rounded-3xl shadow-2xl shadow-blue-900/50 overflow-hidden">
             
-            {/* Dark circular glow directly behind the logo */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[260px] h-[260px] md:w-[380px] md:h-[380px] rounded-full bg-white/80 blur-[60px] -z-20" />
+            {/* Dark circular glow — smaller on mobile */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[180px] h-[180px] md:w-[260px] md:h-[260px] lg:w-[380px] lg:h-[380px] rounded-full bg-white/80 blur-[40px] md:blur-[60px] -z-20" />
 
             {/* Blue Gradient Glow behind the logo */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-gradient-to-r from-blue-500/30 via-blue-400/20 to-blue-500/30 blur-[80px] rounded-full -z-10" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-gradient-to-r from-blue-500/30 via-blue-400/20 to-blue-500/30 blur-[60px] md:blur-[80px] rounded-full -z-10" />
 
             <div className="overflow-hidden flex justify-center">
-                <div className="hero-text-line relative w-[300px] md:w-[500px] h-[120px] md:h-[200px]">
+                <div className="hero-text-line relative w-[200px] sm:w-[260px] md:w-[380px] lg:w-[500px] h-[80px] sm:h-[100px] md:h-[140px] lg:h-[200px]">
                     <Image
                         src="/logo.png"
                         alt="PPC-United"

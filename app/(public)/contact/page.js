@@ -2,77 +2,77 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { gsap } from '@/lib/gsap';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 export default function ContactPage() {
   const [isOpen, setIsOpen] = useState(false);
-  
-  // Refs
   const sectionRef = useRef(null);
-  const containerRef = useRef(null); 
-  const formRef = useRef(null);      
-  const ctaTextRef = useRef(null);   
+  const containerRef = useRef(null);
+  const formRef = useRef(null);
+  const ctaTextRef = useRef(null);
+  const { isMobile } = useMediaQuery();
 
-  // 1. OPEN FORM ANIMATION
+  // 1. OPEN FORM — clip-path morph on desktop, simple fade on mobile
   const openForm = () => {
     setIsOpen(true);
     const tl = gsap.timeline();
 
-    // A. Hide the CTA text smoothly
     tl.to(ctaTextRef.current, {
-        y: -50,
-        opacity: 0,
-        duration: 0.4,
-        ease: "power2.in"
+      y: -50,
+      opacity: 0,
+      duration: 0.4,
+      ease: "power2.in"
     });
 
-    // B. "Morph" the button into the form container
-    tl.to(containerRef.current, {
-        clipPath: "inset(0% 0% 0% 0%)", // Expand to full size
+    if (isMobile) {
+      tl.fromTo(".form-element",
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, stagger: 0.08, duration: 0.4, ease: "power2.out" },
+        "-=0.2"
+      );
+    } else {
+      tl.to(containerRef.current, {
+        clipPath: "inset(0% 0% 0% 0%)",
         duration: 0.8,
         ease: "expo.inOut"
-    }, "-=0.2");
-
-    // C. Animate the Form Elements IN
-    tl.fromTo(".form-element", 
+      }, "-=0.2");
+      tl.fromTo(".form-element",
         { y: 50, opacity: 0 },
-        { 
-            y: 0, opacity: 1, stagger: 0.1, duration: 0.5, ease: "back.out(1.7)" 
-        }, "-=0.4"
-    );
+        { y: 0, opacity: 1, stagger: 0.1, duration: 0.5, ease: "back.out(1.7)" },
+        "-=0.4"
+      );
+    }
   };
 
-  // 2. CLOSE FORM ANIMATION
+  // 2. CLOSE FORM
   const closeForm = () => {
     const tl = gsap.timeline({
-        onComplete: () => setIsOpen(false)
+      onComplete: () => setIsOpen(false)
     });
 
-    // A. Hide Form Elements
     tl.to(".form-element", {
-        y: 20, opacity: 0, duration: 0.3, stagger: -0.05, ease: "power2.in"
+      y: 20, opacity: 0, duration: 0.3, stagger: -0.05, ease: "power2.in"
     });
 
-    // B. Shrink container back to "Button" size
-    tl.to(containerRef.current, {
-        clipPath: "inset(10% 5% 10% 5%)", // Adjust based on your preferred closed size
+    if (!isMobile) {
+      tl.to(containerRef.current, {
+        clipPath: "inset(10% 5% 10% 5%)",
         duration: 0.7,
         ease: "expo.inOut"
-    });
+      });
+    }
 
-    // C. Bring back CTA Text
     tl.to(ctaTextRef.current, {
-        y: 0, opacity: 1, duration: 0.5, ease: "power2.out"
+      y: 0, opacity: 1, duration: 0.5, ease: "power2.out"
     }, "-=0.3");
   };
 
-  // 3. INITIAL SETUP
+  // 3. INITIAL SETUP — clip-path only on desktop
   useEffect(() => {
-    // Initial closed state size
-    // Adjust these values to control how big the "Blue Box" is before clicking
-    gsap.set(containerRef.current, { 
-        clipPath: "inset(10% 5% 10% 5%)" 
-    });
-  }, []);
+    if (containerRef.current && !isMobile) {
+      gsap.set(containerRef.current, { clipPath: "inset(10% 5% 10% 5%)" });
+    }
+  }, [isMobile]);
 
   return (
     <section ref={sectionRef} className="relative h-screen bg-stone-950 flex items-center justify-center overflow-hidden">
@@ -87,7 +87,7 @@ export default function ContactPage() {
         ref={ctaTextRef} 
         className="relative z-10 text-center flex flex-col items-center pointer-events-none w-full max-w-4xl px-4"
       >
-        <h2 className="text-6xl md:text-9xl font-black text-white mb-8 tracking-tighter mix-blend-difference leading-none">
+        <h2 className="text-4xl sm:text-6xl md:text-9xl font-black text-white mb-8 tracking-tighter mix-blend-difference leading-none">
             LET'S<br/>BUILD.
         </h2>
         
@@ -121,21 +121,23 @@ export default function ContactPage() {
             ${!isOpen ? 'cursor-pointer hover:bg-brand-light' : 'bg-stone-100 cursor-default'}
         `}
       >
-        {/* THE TRIGGER TEXT (Visible when closed) */}
+        {/* THE TRIGGER TEXT (Visible when closed) — always centered on all screens */}
         {!isOpen && (
-            <div className="text-center pointer-events-none">
-                <span className="text-white font-black text-4xl md:text-6xl tracking-tighter uppercase block">
-                    Contact US
-                </span>
-                <span className="text-white/60 font-mono text-sm uppercase tracking-widest mt-4 block">
-                    Tap to Open Inquiry Form
-                </span>
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-4">
+                <div className="text-center flex flex-col items-center">
+                    <span className="text-white font-black text-3xl sm:text-4xl md:text-6xl tracking-tighter uppercase block">
+                        Contact US
+                    </span>
+                    <span className="text-white/60 font-mono text-sm uppercase tracking-widest mt-4 block">
+                        Tap to Open Inquiry Form
+                    </span>
+                </div>
             </div>
         )}
 
         {/* --- THE FORM CONTENT (Hidden inside the clip-path initially) --- */}
-        <div ref={formRef} className={`w-full max-w-2xl px-8 ${!isOpen ? 'pointer-events-none' : ''}`}>
-            
+        <div ref={formRef} className={`absolute inset-0 flex items-center justify-center overflow-auto py-8 ${!isOpen ? 'pointer-events-none' : ''}`}>
+            <div className="w-full max-w-2xl px-8">
             {/* Header */}
             <div className="flex justify-between items-end mb-12 form-element opacity-0">
                 <h3 className="text-4xl font-bold text-stone-900">Project Details.</h3>
@@ -176,6 +178,7 @@ export default function ContactPage() {
                     </button>
                 </div>
             </form>
+            </div>
         </div>
 
       </div>
