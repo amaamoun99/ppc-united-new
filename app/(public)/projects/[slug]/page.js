@@ -17,13 +17,13 @@ export default function ProjectDetailsPage() {
   const mainImageRef = useRef(null);
 
   useEffect(() => {
-    const id = params?.id;
-    if (!id) {
+    const slugOrId = params?.slug;
+    if (!slugOrId) {
       setLoading(false);
       setError('Project not found');
       return;
     }
-    fetch(`/api/projects/${id}`)
+    fetch(`/api/projects/slug/${slugOrId}`)
       .then((res) => {
         if (!res.ok) throw new Error('Project not found');
         return res.json();
@@ -34,9 +34,8 @@ export default function ProjectDetailsPage() {
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [params?.id]);
+  }, [params?.slug]);
 
-  // 1. ENTRANCE ANIMATION
   useEffect(() => {
     if (!containerRef.current || !project) return;
 
@@ -91,6 +90,9 @@ export default function ProjectDetailsPage() {
     : project?.createdAt
       ? new Date(project.createdAt).getFullYear()
       : '—';
+  const startDateStr = project?.startDate
+    ? new Date(project.startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+    : null;
   const images = project?.images ?? [];
   const hasImages = images.length > 0;
 
@@ -192,10 +194,22 @@ export default function ProjectDetailsPage() {
                 <span className="block text-xs uppercase text-stone-500 mb-1">Location</span>
                 <p className="text-xl font-bold text-stone-900">{project.location}</p>
               </div>
+              {startDateStr && (
+                <div>
+                  <span className="block text-xs uppercase text-stone-500 mb-1">Start Date</span>
+                  <p className="text-xl font-bold text-stone-900">{startDateStr}</p>
+                </div>
+              )}
               <div>
                 <span className="block text-xs uppercase text-stone-500 mb-1">Year</span>
                 <p className="text-xl font-bold text-stone-900">{year}</p>
               </div>
+              {project.budget && (
+                <div>
+                  <span className="block text-xs uppercase text-stone-500 mb-1">Budget</span>
+                  <p className="text-xl font-bold text-stone-900">{project.budget}</p>
+                </div>
+              )}
               <div>
                 <span className="block text-xs uppercase text-stone-500 mb-1">Scope</span>
                 <p className="text-xl font-bold text-stone-900">{categoryDisplay} Engineering</p>
@@ -206,18 +220,12 @@ export default function ProjectDetailsPage() {
           <div className="animate-in md:col-span-8 border-t border-stone-200 pt-6 md:pt-8">
             <h3 className="text-sm font-mono uppercase tracking-widest text-stone-400 mb-4 md:mb-6">The Concept</h3>
             <p className="text-xl md:text-2xl lg:text-3xl font-serif italic text-stone-800 leading-relaxed mb-6 md:mb-8">
-              &quot;{project.description}&quot;
+              &quot;{project.title}&quot;
             </p>
             <div className="text-lg text-stone-600 space-y-6 leading-relaxed">
-              <p>
-                Our team approached this project with a focus on precision and sustainability.
-                By utilizing advanced BIM modeling, we ensured that every MEP system integrated
-                flawlessly with the architectural vision.
-              </p>
-              <p>
-                The result is a facility that not only meets international standards but sets a new
-                benchmark for {categoryDisplay} construction in the region.
-              </p>
+                <p>
+                  {project.description}
+                </p>
             </div>
             <div className="mt-12">
               <Link

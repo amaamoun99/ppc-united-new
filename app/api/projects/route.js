@@ -11,6 +11,14 @@ function normalizeImagesArray(value) {
   return [];
 }
 
+function generateSlug(title) {
+  if (!title || typeof title !== 'string') return '';
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || '';
+}
+
 export async function GET() {
   try {
     const projects = await prisma.project.findMany({
@@ -34,6 +42,8 @@ export async function POST(request) {
 
     const data = await request.json();
     const imagesArray = normalizeImagesArray(data.images);
+    const slugRaw = (data.slug && String(data.slug).trim()) || generateSlug(data.title);
+    const slug = slugRaw && slugRaw.trim() ? slugRaw.trim() : null;
 
     const project = await prisma.project.create({
       data: {
@@ -42,6 +52,9 @@ export async function POST(request) {
         category: data.category,
         location: data.location,
         images: imagesArray,
+        ...(slug != null && { slug }),
+        startDate: data.startDate ? new Date(data.startDate) : null,
+        budget: data.budget != null ? String(data.budget).trim() || null : null,
         status: data.status || 'ACTIVE',
         isFeatured: data.isFeatured ?? false,
         isActive: data.isActive ?? true,

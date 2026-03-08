@@ -31,6 +31,11 @@ export default function ProjectForm({ initialData = null }) {
     description: initialData?.description || '',
     category: initialData?.category || 'MEP',
     location: initialData?.location || '',
+    slug: initialData?.slug || '',
+    startDate: initialData?.startDate
+      ? new Date(initialData.startDate).toISOString().split('T')[0]
+      : '',
+    budget: initialData?.budget || '',
     status: initialData?.status || 'ACTIVE',
     completedAt: initialData?.completedAt
       ? new Date(initialData.completedAt).toISOString().split('T')[0]
@@ -58,18 +63,25 @@ export default function ProjectForm({ initialData = null }) {
           ...formData,
           priority: Number(formData.priority),
           images: imagesToSave,
+          startDate: formData.startDate || null,
+          budget: formData.budget || null,
         };
         const res = await fetch(`/api/projects/${initialData.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body),
         });
-        if (!res.ok) throw new Error('Failed to save project');
+        if (!res.ok) {
+          const errBody = await res.json().catch(() => ({}));
+          throw new Error(errBody.error || 'Failed to save project');
+        }
       } else {
         const createBody = {
           ...formData,
           priority: Number(formData.priority),
           images: [],
+          startDate: formData.startDate || null,
+          budget: formData.budget || null,
         };
         const res = await fetch('/api/projects', {
           method: 'POST',
@@ -201,6 +213,51 @@ export default function ProjectForm({ initialData = null }) {
                 required
                 className="w-full px-4 py-3 bg-white border border-[var(--blue-500)]/40 rounded-xl text-black placeholder-black/60 focus:outline-none focus:ring-2 focus:ring-[var(--blue-500)] focus:border-transparent transition-all"
                 placeholder="e.g., Riyadh, Saudi Arabia"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="slug" className="block text-sm font-semibold text-white mb-2">
+              Slug (URL)
+            </label>
+            <input
+              type="text"
+              id="slug"
+              name="slug"
+              value={formData.slug}
+              onChange={handleChange}
+              className="w-full px-4 py-3 bg-white border border-[var(--blue-500)]/40 rounded-xl text-black placeholder-black/60 focus:outline-none focus:ring-2 focus:ring-[var(--blue-500)] focus:border-transparent transition-all"
+              placeholder="auto from title if empty"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label htmlFor="startDate" className="block text-sm font-semibold text-white mb-2">
+                Start Date
+              </label>
+              <input
+                type="date"
+                id="startDate"
+                name="startDate"
+                value={formData.startDate}
+                onChange={handleChange}
+                className="w-full px-4 py-3 bg-white border border-[var(--blue-500)]/40 rounded-xl text-black focus:outline-none focus:ring-2 focus:ring-[var(--blue-500)] focus:border-transparent transition-all"
+              />
+            </div>
+            <div>
+              <label htmlFor="budget" className="block text-sm font-semibold text-white mb-2">
+                Budget
+              </label>
+              <input
+                type="text"
+                id="budget"
+                name="budget"
+                value={formData.budget}
+                onChange={handleChange}
+                className="w-full px-4 py-3 bg-white border border-[var(--blue-500)]/40 rounded-xl text-black placeholder-black/60 focus:outline-none focus:ring-2 focus:ring-[var(--blue-500)] focus:border-transparent transition-all"
+                placeholder="e.g., 2M SAR"
               />
             </div>
           </div>

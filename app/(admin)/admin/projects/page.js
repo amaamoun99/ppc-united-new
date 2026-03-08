@@ -40,16 +40,16 @@ export default async function ProjectsPage() {
                   Location
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-bold text-[var(--blue-400)] uppercase tracking-wider">
+                  Start / Budget
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-[var(--blue-400)] uppercase tracking-wider">
                   Status
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-bold text-[var(--blue-400)] uppercase tracking-wider">
                   Priority
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-bold text-[var(--blue-400)] uppercase tracking-wider">
-                  Active
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-[var(--blue-400)] uppercase tracking-wider">
-                  Created
+                  visible
                 </th>
                 <th className="px-6 py-4 text-right text-xs font-bold text-[var(--blue-400)] uppercase tracking-wider">
                   Actions
@@ -69,6 +69,10 @@ export default async function ProjectsPage() {
                     <td className="px-6 py-4 text-white font-medium">{project.title}</td>
                     <td className="px-6 py-4 text-white/80">{project.category}</td>
                     <td className="px-6 py-4 text-white/80">{project.location}</td>
+                    <td className="px-6 py-4 text-white/70 text-sm">
+                      {project.startDate ? new Date(project.startDate).toLocaleDateString() : '—'}
+                      {project.budget && ` / ${project.budget}`}
+                    </td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full border ${statusColors[project.status]}`}>
                         {project.status}
@@ -85,9 +89,6 @@ export default async function ProjectsPage() {
                       >
                         {project.isActive !== false ? 'Yes' : 'No'}
                       </span>
-                    </td>
-                    <td className="px-6 py-4 text-white/60 text-sm">
-                      {new Date(project.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 text-right space-x-3">
                       <Link

@@ -5,6 +5,9 @@ import { gsap, ScrollTrigger } from '@/lib/gsap';
 
 export default function GetInTouch() {
   const [isOpen, setIsOpen] = useState(false);
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
+  const [submitStatus, setSubmitStatus] = useState(null); // null | 'loading' | 'success' | 'error'
+  const [submitMessage, setSubmitMessage] = useState('');
   
   // Refs
   const sectionRef = useRef(null);
@@ -86,6 +89,42 @@ export default function GetInTouch() {
     });
   }, []);
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (submitStatus) setSubmitStatus(null);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitStatus('loading');
+    setSubmitMessage('');
+    try {
+      const res = await fetch('/api/inquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim() || null,
+          message: formData.message.trim(),
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setSubmitStatus('error');
+        setSubmitMessage(data.error || 'Failed to send inquiry.');
+        return;
+      }
+      setSubmitStatus('success');
+      setSubmitMessage('Thank you! We’ll get back to you soon.');
+      setFormData({ name: '', email: '', phone: '', message: '' });
+    } catch (err) {
+      setSubmitStatus('error');
+      setSubmitMessage('Something went wrong. Please try again.');
+    }
+  };
+
   return (
     <section ref={sectionRef} className="relative h-screen bg-gradient-to-b from-blue-950 via-stone-950 to-stone-950 flex items-center justify-center overflow-hidden z-10">
       
@@ -140,31 +179,36 @@ export default function GetInTouch() {
             </div>
 
             {/* Inputs */}
-            <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
+            <form className="space-y-8" onSubmit={handleSubmit}>
+                {submitMessage && (
+                  <div className={`form-element opacity-0 text-sm font-medium px-4 py-3 rounded ${submitStatus === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                    {submitMessage}
+                  </div>
+                )}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="group form-element opacity-0">
-                        <label className="block text-xs font-mono text-stone-400 uppercase mb-2">My Name is</label>
-                        <input type="text" placeholder="John Doe" className="w-full bg-transparent border-b border-stone-300 py-2 text-xl text-stone-900 focus:outline-none focus:border-brand transition-colors" />
+                        <label htmlFor="inquiry-name" className="block text-xs font-mono text-stone-400 uppercase mb-2">My Name is</label>
+                        <input id="inquiry-name" name="name" type="text" placeholder="John Doe" value={formData.name} onChange={handleInputChange} className="w-full bg-transparent border-b border-stone-300 py-2 text-xl text-stone-900 focus:outline-none focus:border-brand transition-colors" required />
                     </div>
                     <div className="group form-element opacity-0">
-                        <label className="block text-xs font-mono text-stone-400 uppercase mb-2">Email Address</label>
-                        <input type="email" placeholder="john@example.com" className="w-full bg-transparent border-b border-stone-300 py-2 text-xl text-stone-900 focus:outline-none focus:border-brand transition-colors" />
+                        <label htmlFor="inquiry-email" className="block text-xs font-mono text-stone-400 uppercase mb-2">Email Address</label>
+                        <input id="inquiry-email" name="email" type="email" placeholder="john@example.com" value={formData.email} onChange={handleInputChange} className="w-full bg-transparent border-b border-stone-300 py-2 text-xl text-stone-900 focus:outline-none focus:border-brand transition-colors" required />
                     </div>
                 </div>
 
                 <div className="group form-element opacity-0">
-                    <label className="block text-xs font-mono text-stone-400 uppercase mb-2">Phone Number</label>
-                    <input type="tel" placeholder="+966 ..." className="w-full bg-transparent border-b border-stone-300 py-2 text-xl text-stone-900 focus:outline-none focus:border-brand transition-colors" />
+                    <label htmlFor="inquiry-phone" className="block text-xs font-mono text-stone-400 uppercase mb-2">Phone Number</label>
+                    <input id="inquiry-phone" name="phone" type="tel" placeholder="+966 ..." value={formData.phone} onChange={handleInputChange} className="w-full bg-transparent border-b border-stone-300 py-2 text-xl text-stone-900 focus:outline-none focus:border-brand transition-colors" />
                 </div>
 
                 <div className="group form-element opacity-0">
-                    <label className="block text-xs font-mono text-stone-400 uppercase mb-2">Tell us about your project</label>
-                    <textarea rows="3" placeholder="We need a MEP solution for..." className="w-full bg-transparent border-b border-stone-300 py-2 text-xl text-stone-900 focus:outline-none focus:border-brand transition-colors resize-none" />
+                    <label htmlFor="inquiry-message" className="block text-xs font-mono text-stone-400 uppercase mb-2">Tell us about your project</label>
+                    <textarea id="inquiry-message" name="message" rows="3" placeholder="We need a MEP solution for..." value={formData.message} onChange={handleInputChange} className="w-full bg-transparent border-b border-stone-300 py-2 text-xl text-stone-900 focus:outline-none focus:border-brand transition-colors resize-none" required />
                 </div>
 
                 <div className="pt-8 form-element opacity-0">
-                    <button className="w-full bg-stone-900 text-white py-6 rounded-none hover:bg-brand transition-colors text-lg font-bold tracking-widest uppercase">
-                        Send Inquiry
+                    <button type="submit" disabled={submitStatus === 'loading'} className="w-full bg-stone-900 text-white py-6 rounded-none hover:bg-brand transition-colors text-lg font-bold tracking-widest uppercase disabled:opacity-60 disabled:cursor-not-allowed">
+                        {submitStatus === 'loading' ? 'Sending…' : 'Send Inquiry'}
                     </button>
                 </div>
             </form>

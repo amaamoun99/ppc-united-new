@@ -172,6 +172,7 @@ export default function ProjectsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
           {filteredProjects.map((project, index) => {
             const imageUrl = project.images?.[0];
+            const detailSlug = project.slug ;
             const year = project.completedAt
               ? new Date(project.completedAt).getFullYear()
               : project.createdAt
@@ -180,7 +181,7 @@ export default function ProjectsPage() {
             return (
             <Link
               key={project.id}
-              href={`/projects/${project.id}`}
+              href={`/projects/${detailSlug}`}
               ref={(el) => (cardsRef.current[index] = el)}
               className={`project-card group perspective-1000 block ${isMobile ? 'cursor-pointer' : 'cursor-none'}`}
             >

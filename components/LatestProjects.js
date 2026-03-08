@@ -35,6 +35,7 @@ export default function LatestProjects({ onContentReady }) {
       .filter((project) => project.isFeatured && project.isActive !== false)
       .map((project) => ({
         id: project.id,
+        detailSlug: project.slug ,
         title: project.title,
         category: project.categoryDisplay || project.category,
         image: project.images?.[0],
@@ -247,7 +248,7 @@ export default function LatestProjects({ onContentReady }) {
                     className="flex-shrink-0 px-2 md:px-4"
                     style={{ width: `${100 / filteredProjects.length}%` }}
                   >
-                    <Link href={`/projects/${project.id}`} className="group block">
+                    <Link href={`/projects/${project.detailSlug}`} className="group block">
                       <div className="relative w-full aspect-[3/4] overflow-hidden rounded-lg bg-stone-200 shadow-xl transition-all duration-500 group-hover:shadow-2xl mb-6">
                         {project.image ? (
                           <Image
@@ -316,7 +317,7 @@ export default function LatestProjects({ onContentReady }) {
             {filteredProjects.map((project, index) => (
               <Link
                 key={project.id}
-                href={`/projects/${project.id}`}
+                href={`/projects/${project.detailSlug}`}
                 className={`desktop-project-card group relative flex flex-col gap-6 cursor-none ${index % 2 === 1 ? 'md:translate-y-16' : ''}`}
               >
                 <div className="relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-stone-200 shadow-xl transition-shadow duration-500 group-hover:shadow-2xl">
